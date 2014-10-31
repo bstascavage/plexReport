@@ -24,26 +24,30 @@ class ReadLog
     def getMovies
 	moviedb = TheMovieDB.new
 	plex = Plex.new
-	test = plex.get('library/recentlyAdded')
+	library = plex.get('library/recentlyAdded')
+	movies = Array.new
 
-	test['MediaContainer']['Video'].each do | element |
-    	    movie_id = plex.get("library/metadata/#{element['ratingKey']}")['MediaContainer']['Video']['guid'].gsub(/com.plexapp.agents.themoviedb:\/\//, '').gsub(/\?lang=en/, '')
-    	    if !movie_id.include?('local')
-	    begin
-       	        movie = moviedb.get("movie/#{movie_id}")
-	            movies.push({ 
-	               :id       => movie['id'],
-	               :title    => movie['title'],
-	               :image    => "https://image.tmdb.org/t/p/w154#{movie['poster_path']}",
-	               :date     => Time.new(movie['release_date']).year,
-	               :tagline  => movie['tagline'],
-	               :synopsis => movie['overview'],
-	               :runtime  => movie['runtime'],
-	               :imdb     => "http://www.imdb.com/title/#{movie['imdb_id']}"
-		 })
-    	    rescue
+	library['MediaContainer']['Video'].each do | element |
+	    if (Time.now.to_i - element['updatedAt'].to_i < 604800)
+		plex_movie = plex.get("library/metadata/#{element['ratingKey']}")['MediaContainer']['Video']
+    	        movie_id = plex.get("library/metadata/#{element['ratingKey']}")['MediaContainer']['Video']['guid'].gsub(/com.plexapp.agents.themoviedb:\/\//, '').gsub(/\?lang=en/, '')
+    	        if !movie_id.include?('local') 
+	            begin
+       	                movie = moviedb.get("movie/#{movie_id}")
+	                    movies.push({ 
+	                        :id       => movie['id'],
+	                        :title    => movie['title'],
+	                        :image    => "https://image.tmdb.org/t/p/w154#{movie['poster_path']}",
+	                        :date     => Time.new(movie['release_date']).year,
+	                        :tagline  => movie['tagline'],
+	                        :synopsis => movie['overview'],
+	                        :runtime  => movie['runtime'],
+	                        :imdb     => "http://www.imdb.com/title/#{movie['imdb_id']}"
+		            })
+    	            rescue
+                    end
+	        end
             end
-	    end
     	end
 
 	return movies
@@ -65,6 +69,5 @@ test = ReadLog.new
 #test.getTvInfo
 movies = test.getMovies
 
-pp movies
-#template = ERB.new File.new("../etc/email_body.erb").read, nil, "%"
-#puts template.result(binding)
+template = ERB.new File.new("../etc/email_body.erb").read, nil, "%"
+puts template.result(binding)
