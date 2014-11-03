@@ -3,7 +3,6 @@ require 'rubygems'
 require 'time'
 require 'yaml'
 require 'erb'
-require 'pp'
 
 require_relative 'plex'
 require_relative 'themoviedb'
@@ -63,28 +62,51 @@ class ReadLog
 	    library['MediaContainer']['Directory'].each do | element |
             if element['type'].include?('season')
                 if ((Time.now.to_i - element['addedAt'].to_i < 604800) &&
-                        !(Time.now.to_i - element['updatedAt'].to_i < 604800))
+                        (!(Time.now.to_i - element['updatedAt'].to_i < 604800) || 
+                        !element.has_key?('updatedAt')))
 
                     show_episodes = plex.get("/library/metadata/#{element['parentRatingKey']}/allLeaves")
-                    show_episodes['MediaContainer']['Video'].each do | episode |
+                    if show_episodes['MediaContainer']['size'].to_i == 1
                         begin
-                            if (Time.now.to_i - episode['addedAt'].to_i < 604800) 
-                                show_id = plex.get(episode['parentKey'])['MediaContainer']['Directory']['guid'].gsub(/.*:\/\//, '').gsub(/\/.*/, '')
-                                show = thetvdb.get("series/#{show_id}/all/")['Data']['Series']
-
-                                tv_episodes.push({
-                                    :id             => show_id,
-                                    :series_name    => show['SeriesName'],
-                                    :image          => "http://thetvdb.com/banners/#{show['poster']}",
-                                    :network        => show['Network'],
-                                    :imdb           => "http://www.imdb.com/title/#{show['IMDB_ID']}",
-                                    :title          => episode['title'],
-                                    :episode_number => "S#{episode['parentIndex']} E#{episode['index']}",
-                                    :synopsis       => episode['summary'],
-                                    :airdate        => episode['originallyAvailableAt']
-                                })
-                            end
+                            episode = show_episodes['MediaContainer']['Video']
+                            show_id = plex.get(episode['parentKey'])['MediaContainer']['Directory']['guid'].gsub(/.*:\/\//, '').gsub(/\/.*/, '')
+                            show = thetvdb.get("series/#{show_id}/all/")['Data']['Series']
+                            tv_episodes.push({
+                                :id             => show_id,
+                                :series_name    => show['SeriesName'],
+                                :image          => "http://thetvdb.com/banners/#{show['poster']}",
+                                :network        => show['Network'],
+                                :imdb           => "http://www.imdb.com/title/#{show['IMDB_ID']}",
+                                :title          => episode['title'],
+                                :episode_number => "S#{episode['parentIndex']} E#{episode['index']}",
+                                :synopsis       => episode['summary'],
+                                :synopsis       => episode['summary'],
+                                :airdate        => episode['originallyAvailableAt']
+                            })
                         rescue
+                        end
+                    else
+                        show_episodes['MediaContainer']['Video'].each do | episode |
+                            begin
+                                if (Time.now.to_i - episode['addedAt'].to_i < 604800) 
+                                    show_id = plex.get(episode['parentKey'])['MediaContainer']['Directory']['guid'].gsub(/.*:\/\//, '').gsub(/\/.*/, '')
+                                    show = thetvdb.get("series/#{show_id}/all/")['Data']['Series']
+
+                                    tv_episodes.push({
+                                        :id             => show_id,
+                                        :series_name    => show['SeriesName'],
+                                        :image          => "http://thetvdb.com/banners/#{show['poster']}",
+                                        :network        => show['Network'],
+                                        :imdb           => "http://www.imdb.com/title/#{show['IMDB_ID']}",
+                                        :title          => episode['title'],
+                                        :episode_number => "S#{episode['parentIndex']} E#{episode['index']}",
+                                        :synopsis       => episode['summary'],
+                                        :synopsis       => episode['summary'],
+                                        :airdate        => episode['originallyAvailableAt']
+                                    })
+                                end
+                            rescue
+                            end
                         end
                     end
                 end
@@ -100,31 +122,37 @@ class ReadLog
         tv_episodes = Array.new
 
         library['MediaContainer']['Directory'].each do | element |
-#            if element['type'].include?('season')
-                if ((Time.now.to_i - element['addedAt'].to_i < 604800))
-                    show_id = plex.get(element['parentKey'])['MediaContainer']['Directory']['guid'].gsub(/.*:\/\//, '').gsub(/\/.*/, '').gsub(/\?.*/, '')
-                    begin
-                        show = thetvdb.get("series/#{show_id}/all/")['Data']
-                        season_mapping = Hash.new
-                        show['Episode'].each do | episode_count |
-                            season_mapping[episode_count['SeasonNumber']] = 
-                                episode_count['EpisodeNumber']
-                        end
-                        if season_mapping[element['index']] == element['leafCount']
+            if ((Time.now.to_i - element['addedAt'].to_i < 604800))
+                show_id = plex.get(element['parentKey'])['MediaContainer']['Directory']['guid'].gsub(/.*:\/\//, '').gsub(/\/.*/, '').gsub(/\?.*/, '')
+                begin
+                    show = thetvdb.get("series/#{show_id}/all/")['Data']
+                    season_mapping = Hash.new
+                    show['Episode'].each do | episode_count |
+                        season_mapping[episode_count['SeasonNumber']] = 
+                            episode_count['EpisodeNumber']
+                    end
+                    if season_mapping[element['index']] == element['leafCount']
+                        if tv_episodes.detect { |f| f[:id].to_i == show_id.to_i }
+                            tv_episodes.each do |x|
+                                if x[:id] == show_id
+                                    x[:season].push(element['index'])
+                                end
+                            end
+                        else
                             tv_episodes.push({
                                 :id             => show_id,
                                 :series_name    => show['Series']['SeriesName'],
                                 :image          => "http://thetvdb.com/banners/#{show['Series']['poster']}",
-                                :season         => element['index'],
+                                :season         => [element['index']],
                                 :network        => show['Series']['Network'],
                                 :imdb           => "http://www.imdb.com/title/#{show['Series']['IMDB_ID']}",
                                 :synopsis       => show['Series']['Overview']
                             })
-                        end  
-                        rescue
-                    end                    
-                end
-#            end
+                        end
+                    end  
+                    rescue
+                end                    
+            end
         end
         return tv_episodes
     end
@@ -135,6 +163,7 @@ new_episodes = test.getNewTVEpisodes
 new_seasons = test.getNewTVSeasons
 movies = test.getMovies
 
+#pp new_episodes
 YAML.load_file(File.join(File.expand_path(File.dirname(__FILE__)), '../etc/config.yaml') )
 template = ERB.new File.new(File.join(File.expand_path(File.dirname(__FILE__)), "../etc/email_body.erb") ).read, nil, "%"
 puts template.result(binding)
