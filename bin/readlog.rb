@@ -135,5 +135,6 @@ new_episodes = test.getNewTVEpisodes
 new_seasons = test.getNewTVSeasons
 movies = test.getMovies
 
-template = ERB.new File.new("../etc/email_body.erb").read, nil, "%"
+YAML.load_file(File.join(File.expand_path(File.dirname(__FILE__)), '../etc/config.yaml') )
+template = ERB.new File.new(File.join(File.expand_path(File.dirname(__FILE__)), "../etc/email_body.erb") ).read, nil, "%"
 puts template.result(binding)
