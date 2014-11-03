@@ -30,7 +30,7 @@ class PlexReport
 	    movies = Array.new
 
 	    library['MediaContainer']['Video'].each do | element |
-	        if (Time.now.to_i - element['updatedAt'].to_i < 604800)
+	        if (Time.now.to_i - element['addedAt'].to_i < 604800)
 		        plex_movie = plex.get("/library/metadata/#{element['ratingKey']}")['MediaContainer']['Video']
     	        
                 # This is some contrivulted logic to strip off the moviedb.org id
