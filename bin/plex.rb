@@ -1,8 +1,7 @@
 #!/usr/bin/ruby
 require 'rubygems'
 require 'json'
-
-require_relative 'themoviedb'
+require 'httparty'
 
 # Class To interact with Plex, for pulling movie and TV info
 #
@@ -12,7 +11,7 @@ require_relative 'themoviedb'
 class Plex
     include HTTParty
 
-    base_uri 'http://localhost:32400//'
+    base_uri 'http://localhost:32400/'
     format :xml
 
     begin
