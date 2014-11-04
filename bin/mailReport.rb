@@ -5,6 +5,11 @@ require 'time'
 
 require_relative 'plexTv'
 
+# Class for sending out the email notification.
+#
+# Author: Brian Stascavage
+# Email: brian@stascavage.com
+#
 class MailReport
     def initialize
     	begin
@@ -14,6 +19,7 @@ class MailReport
         end
     end
 
+    # Method for pulling the email information from the config and emailing all Plex users
     def sendMail(body)
         options = { :address              => $config['mail']['address'],
                     :port                 => $config['mail']['port'],
