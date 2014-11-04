@@ -10,7 +10,7 @@ require_relative 'themoviedb'
 require_relative 'thetvdb'
 require_relative 'mailReport'
 
-# Class for parsing the PlexWatch log for new movies and TV Shows
+# Class for parsing the Plex server for new movies and TV Shows
 #
 # Author: Brian Stascavage
 # Email: brian@stascavage.com
