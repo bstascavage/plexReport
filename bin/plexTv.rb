@@ -14,12 +14,7 @@ class PlexTv
     base_uri 'http://plex.tv/'
     format :xml
 
-    def initialize(api_key)
-        begin
-            config = YAML.load_file(File.join(File.expand_path(File.dirname(__FILE__)), '../etc/config.yaml') )
-        rescue Errno::ENOENT => e
-            abort('Configuration file not found.  Exiting...')
-        end
+    def initialize(config)
         $token = config['plex']['api_key']
     end
 

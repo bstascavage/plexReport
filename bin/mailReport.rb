@@ -11,18 +11,26 @@ require_relative 'plexTv'
 # Email: brian@stascavage.com
 #
 class MailReport
-    def initialize
-    	begin
-       	    $config = YAML.load_file(File.join(File.expand_path(File.dirname(__FILE__)), '../etc/config.yaml') )
-        rescue Errno::ENOENT => e
-            abort('Configuration file not found.  Exiting...')
+    def initialize(config)
+        $config = config
+        
+        if !$config['mail']['port'].nil?
+            $port = $config['mail']['port']
+        else
+            $port = 25
+        end
+
+        if !$config['mail']['subject'].nil?
+            $subject = $config['mail']['subject']
+        else
+            $subject = "Plex Summary "
         end
     end
 
     # Method for pulling the email information from the config and emailing all Plex users
     def sendMail(body)
         options = { :address              => $config['mail']['address'],
-                    :port                 => $config['mail']['port'],
+                    :port                 => $port,
                     :domain               => 'otherdomain.com',
                     :user_name            => $config['mail']['username'],
                     :password             => $config['mail']['password'],
@@ -34,17 +42,20 @@ class MailReport
 
         users = Array.new
 
-        plexTv = PlexTv.new($config['plex']['api_key'])
+        # Logic for pulling the email accounts from Plex.tv
+        plexTv = PlexTv.new($config)
         plex_users = plexTv.get("/pms/friends/all")
         plex_users['MediaContainer']['User'].each do | user |
             users.push(user['email'])
         end
 
+        users = ['brian@stascavage.com']
+
         users.each do | user |
             mail = Mail.new do
-                from "#{$config['mail']['from']} <brian@stascavage.com>"
+                from "#{$config['mail']['from']} <#{$config['mail']['username']}>"
                 to user
-                subject "Felannisport Update: Week of #{Time.now.strftime("%m/%d/%Y")}"
+                subject $config['mail']['subject'] + Time.now.strftime("%m/%d/%Y")
                 content_type 'text/html; charset=UTF-8'
                 body body
             end

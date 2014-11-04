@@ -26,8 +26,8 @@ class PlexReport
      
     # Method for retrieving information for all movies for a given period of time. 
     def getMovies
-    	moviedb = TheMovieDB.new
-	    plex = Plex.new
+    	moviedb = TheMovieDB.new($config)
+	    plex = Plex.new($config)
 	    library = plex.get('/library/recentlyAdded')
 	    movies = Array.new
 
@@ -64,7 +64,7 @@ class PlexReport
     # This only returns new episodes, not seasons
     def getNewTVEpisodes
         thetvdb = TheTVDB.new
-        plex = Plex.new
+        plex = Plex.new($config)
         library = plex.get('/library/recentlyAdded')
         tv_episodes = Array.new
 
@@ -144,7 +144,7 @@ class PlexReport
     # to thetvdb.com
     def getNewTVSeasons
         thetvdb = TheTVDB.new
-        plex = Plex.new
+        plex = Plex.new($config)
         library = plex.get('/library/recentlyAdded')
         tv_episodes = Array.new
 
@@ -200,7 +200,7 @@ def main
     YAML.load_file(File.join(File.expand_path(File.dirname(__FILE__)), '../etc/config.yaml') )
     template = ERB.new File.new(File.join(File.expand_path(File.dirname(__FILE__)), "../etc/email_body.erb") ).read, nil, "%"
 #    puts template.result(binding)
-    mail = MailReport.new
+    mail = MailReport.new($config)
     mail.sendMail(template.result(binding))
 end
 

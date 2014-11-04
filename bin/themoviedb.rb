@@ -16,14 +16,8 @@ class TheMovieDB
     base_uri 'https://api.themoviedb.org/3//'
     format :json
 
-    begin
-        $config = YAML.load_file(File.join(File.expand_path(File.dirname(__FILE__)), '../etc/config.yaml') )
-    rescue Errno::ENOENT => e
-        abort('Configuration file not found.  Exiting...')
-    end
-
-    def initialize
-    	$token = $config['themoviedb']['api_key']    
+    def initialize(config)
+    	$token = config['themoviedb']['api_key']    
     end
 
     def get(query, args=nil)

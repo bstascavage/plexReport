@@ -13,16 +13,8 @@ class TheTVDB
     include HTTParty
 
     base_uri 'http://thetvdb.com/data//'
-#    format :json
-
-    begin
-        $config = YAML.load_file(File.join(File.expand_path(File.dirname(__FILE__)), '../etc/config.yaml') )
-    rescue Errno::ENOENT => e
-        abort('Configuration file not found.  Exiting...')
-    end
 
     def initialize
-        #$token = $config['thetvdb']['api_key']
     end
 
     def get(query, args=nil)

@@ -12,3 +12,4 @@ mail:
    username: <MAIL_USERNAME>
    password: <MAIL_PASSWORD>
    from: <FROM_DISPLAY_NAME>  
+   subject: <EMAIL_SUBJECT>
