@@ -70,10 +70,10 @@ class PlexReport
 
 	    library['MediaContainer']['Directory'].each do | element |
             if element['type'].include?('season')
-                if ((Time.now.to_i - element['addedAt'].to_i < 604800) &&
-                        (!(Time.now.to_i - element['updatedAt'].to_i < 604800) || 
-                        !element.has_key?('updatedAt')))
-
+                if ((Time.now.to_i - element['addedAt'].to_i < 604800)) 
+                    #    (!(Time.now.to_i - element['updatedAt'].to_i < 604800) || 
+                    #    !element.has_key?('updatedAt')))
+                    pp element['parentTitle']
                     show_episodes = plex.get("/library/metadata/#{element['parentRatingKey']}/allLeaves")
 
                     # This checks for any shows that are exact one episode large.
