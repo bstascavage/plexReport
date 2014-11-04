@@ -113,20 +113,35 @@ class PlexReport
                                     # information easier to get
                                     show_id = plex.get(episode['parentKey'])['MediaContainer']['Directory']['guid'].gsub(/.*:\/\//, '').gsub(/\/.*/, '')
 
-                                    show = thetvdb.get("series/#{show_id}/all/")['Data']['Series']
-
-                                    tv_episodes.push({
-                                        :id             => show_id,
-                                        :series_name    => show['SeriesName'],
-                                        :image          => "http://thetvdb.com/banners/#{show['poster']}",
-                                        :network        => show['Network'],
-                                        :imdb           => "http://www.imdb.com/title/#{show['IMDB_ID']}",
-                                        :title          => episode['title'],
-                                        :episode_number => "S#{episode['parentIndex']} E#{episode['index']}",
-                                        :synopsis       => episode['summary'],
-                                        :synopsis       => episode['summary'],
-                                        :airdate        => episode['originallyAvailableAt']
-                                    })
+                                    show = thetvdb.get("series/#{show_id}/all/")['Data']
+                                    season_mapping = Hash.new
+                                    dvd_season_mapping = Hash.new
+                                    show['Episode'].each do | episode_count |
+                                        if !episode_count['DVD_episodenumber'].nil?
+                                            dvd_season_mapping[episode_count['SeasonNumber']] =
+                                                episode_count['DVD_episodenumber'].to_i
+                                        end
+                                    end
+                                    show['Episode'].each do | episode_count |
+                                        season_mapping[episode_count['SeasonNumber']] =
+                                            episode_count['EpisodeNumber']
+                                    end
+                                    show = show['Series']
+                                    if !(season_mapping[element['index']].to_i == element['leafCount'].to_i ||
+                                        dvd_season_mapping[element['index']].to_i == element['leafCount'].to_i)
+                                            tv_episodes.push({
+                                                :id             => show_id,
+                                                :series_name    => show['SeriesName'],
+                                                :image          => "http://thetvdb.com/banners/#{show['poster']}",
+                                                :network        => show['Network'],
+                                                :imdb           => "http://www.imdb.com/title/#{show['IMDB_ID']}",
+                                                :title          => episode['title'],
+                                                :episode_number => "S#{episode['parentIndex']} E#{episode['index']}",
+                                                :synopsis       => episode['summary'],
+                                                :synopsis       => episode['summary'],
+                                                :airdate        => episode['originallyAvailableAt']
+                                            })
+                                    end
                                 end
                             rescue
                             end
@@ -159,11 +174,19 @@ class PlexReport
                 begin
                     show = thetvdb.get("series/#{show_id}/all/")['Data']
                     season_mapping = Hash.new
+                    dvd_season_mapping = Hash.new
                     show['Episode'].each do | episode_count |
                         season_mapping[episode_count['SeasonNumber']] = 
                             episode_count['EpisodeNumber']
                     end
-                    if season_mapping[element['index']] == element['leafCount']
+                    show['Episode'].each do | episode_count |
+                        if !episode_count['DVD_episodenumber'].nil?
+                            dvd_season_mapping[episode_count['SeasonNumber']] =
+                            episode_count['DVD_episodenumber'].to_i
+                        end
+                    end
+                    if (season_mapping[element['index']].to_i == element['leafCount'].to_i ||
+                        dvd_season_mapping[element['index']].to_i == element['leafCount'].to_i)
                         if tv_episodes.detect { |f| f[:id].to_i == show_id.to_i }
                             tv_episodes.each do |x|
                                 if x[:id] == show_id

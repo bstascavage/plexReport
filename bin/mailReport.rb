@@ -49,8 +49,6 @@ class MailReport
             users.push(user['email'])
         end
 
-        users = ['brian@stascavage.com']
-
         users.each do | user |
             mail = Mail.new do
                 from "#{$config['mail']['from']} <#{$config['mail']['username']}>"
