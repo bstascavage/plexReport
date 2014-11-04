@@ -1,2 +1,2 @@
-bin/email-tmp.sh
+etc/config.yaml
 cron/

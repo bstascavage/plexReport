@@ -23,7 +23,7 @@ class TheTVDB
     end
 
     def initialize
-        $token = $config['thetvdb']['api_key']
+        #$token = $config['thetvdb']['api_key']
     end
 
     def get(query, args=nil)

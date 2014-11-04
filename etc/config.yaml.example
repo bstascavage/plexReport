@@ -1,0 +1,14 @@
+---
+themoviedb:
+   api_key: <API_KEY>
+email:
+   title: 'Default Email Header'
+plex:
+   server: 'localhost'
+   api_key: <API_KEY>
+mail:
+   address: <MAIL_SERVER_ADDRESS>
+   port: 25
+   username: <MAIL_USERNAME>
+   password: <MAIL_PASSWORD>
+   from: <FROM_DISPLAY_NAME>  

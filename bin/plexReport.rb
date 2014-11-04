@@ -7,6 +7,7 @@ require 'erb'
 require_relative 'plex'
 require_relative 'themoviedb'
 require_relative 'thetvdb'
+require_relative 'mailReport'
 
 # Class for parsing the PlexWatch log for new movies and TV Shows
 #
@@ -197,7 +198,9 @@ def main
 
     YAML.load_file(File.join(File.expand_path(File.dirname(__FILE__)), '../etc/config.yaml') )
     template = ERB.new File.new(File.join(File.expand_path(File.dirname(__FILE__)), "../etc/email_body.erb") ).read, nil, "%"
-    puts template.result(binding)
+#    puts template.result(binding)
+    mail = MailReport.new
+    mail.sendMail(template.result(binding))
 end
 
 main()

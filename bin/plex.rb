@@ -3,22 +3,21 @@ require 'rubygems'
 require 'json'
 require 'httparty'
 
-# Class To interact with Plex, for pulling movie and TV info
+# Class To interact with a Plex server, for pulling movie and TV info and stuff
 #
 # Author: Brian Stascavage
 # Email: brian@stascavage.com
 #
 class Plex
     include HTTParty
-
-    base_uri 'http://localhost:32400/'
-    format :xml
-
     begin
         $config = YAML.load_file(File.join(File.expand_path(File.dirname(__FILE__)), '../etc/config.yaml') )
     rescue Errno::ENOENT => e
         abort('Configuration file not found.  Exiting...')
     end
+
+    base_uri "http://#{$config['plex']['server']}:32400/"
+    format :xml
 
     def initialize
     end
