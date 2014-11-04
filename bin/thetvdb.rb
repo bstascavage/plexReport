@@ -4,8 +4,7 @@ require 'json'
 require 'httparty'
 require 'pp'
 
-# Class that interacts with thetvdb.org.  Make sure your API key is set in
-# etc/config.yaml. 
+# Class that interacts with thetvdb.org.  
 #
 # Author: Brian Stascavage
 # Email: brian@stascavage.com
