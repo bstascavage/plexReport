@@ -44,11 +44,13 @@ class MailReport
 
         # Logic for pulling the email accounts from Plex.tv
         plexTv = PlexTv.new($config)
-        plex_users = plexTv.get("/pms/friends/all")
+        plex_users = plexTv.get('/pms/friends/all')
         plex_users['MediaContainer']['User'].each do | user |
             users.push(user['email'])
         end
 
+        #Get owner's email as well and add it to the list of recpients
+        users.push(plexTv.get('/users/account')['user']['email'][0])
         users.each do | user |
             mail = Mail.new do
                 from "#{$config['mail']['from']} <#{$config['mail']['username']}>"
