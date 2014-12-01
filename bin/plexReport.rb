@@ -2,6 +2,7 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'time'
+require 'date'
 require 'yaml'
 require 'erb'
 require 'logger'
@@ -96,13 +97,14 @@ class PlexReport
                     episodes.each do | episode |
                         airdate = nil
                         begin
-                            airdate = Date.parse(episode['FirstAired'])
+                            airdate_date = Date.parse(episode['FirstAired'])
                         rescue
                         end
-                           
-                        if !airdate.nil?
-                            if (Time.now.to_i - airdate.to_time.to_i < 604800 && 
-                                Time.now.to_i - airdate.to_time.to_i > 0)
+			
+                        if !airdate_date.nil?
+                            if ((Date.parse(Time.now.to_s) - airdate_date).round < 8 &&
+                                (Date.parse(Time.now.to_s) - airdate_date).round > 0)
+				if !tv_episodes[:new].any? {|h| h[:id] == show_id}
                                     tv_episodes[:new].push({
                                         :id             => show_id,
                                         :series_name    => show['Series']['SeriesName'],
@@ -114,6 +116,7 @@ class PlexReport
                                         :synopsis       => episode['Overview'],
                                         :airdate        => episode['FirstAired']
                                     })
+				end
                             else
                                 begin
                                     season_mapping = Hash.new
