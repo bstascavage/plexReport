@@ -100,7 +100,7 @@ class PlexReport
                             airdate_date = Date.parse(episode['FirstAired'])
                         rescue
                         end
-			
+
                         if !airdate_date.nil?
                             if ((Date.parse(Time.now.to_s) - airdate_date).round < 8 &&
                                 (Date.parse(Time.now.to_s) - airdate_date).round > 0)
@@ -117,7 +117,7 @@ class PlexReport
                                         :airdate        => episode['FirstAired']
                                     })
 				end
-                            else
+                            elsif ((Date.parse(Time.now.to_s) - Date.parse(Time.at(element['addedAt'].to_i).to_s)).round < 7)
                                 begin
                                     season_mapping = Hash.new
                                     dvd_season_mapping = Hash.new
