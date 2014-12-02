@@ -40,6 +40,7 @@ The following are needed to run this script:
 
 ###### plex
 `server` - IP address of your Plex server.  Defaults to 'localhost'
+
 `api_key` - Your Plex API key
 
 ###### mail
