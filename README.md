@@ -49,3 +49,16 @@ The following are needed to run this script:
 `password` - Password for hte email set above
 `from` - Display name of the sender
 `subject` - Subject of the email.  Note that the script will automatically add a date to the end of the subject
+
+## Images
+
+New Episodes:
+![alt tag](http://i.imgur.com/hWzHl2x.png)
+
+
+New Seasons:
+![alt tag](http://i.imgur.com/sBy62Ty.png)
+
+
+New Movies:
+![alt tag](http://i.imgur.com/E3Q85uU.png)
