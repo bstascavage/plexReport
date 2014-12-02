@@ -44,10 +44,15 @@ The following are needed to run this script:
 
 ###### mail
 `address` - Address of your smtp relay server.  (ie smtp.gmail.com)
+
 `port` - Mail port to use.  Default is 25.  (Use 587 for gmail.com)
+
 `username` - Email address to send the email from
+
 `password` - Password for hte email set above
+
 `from` - Display name of the sender
+
 `subject` - Subject of the email.  Note that the script will automatically add a date to the end of the subject
 
 ## Images
