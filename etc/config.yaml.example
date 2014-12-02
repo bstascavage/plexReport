@@ -1,10 +1,8 @@
 ---
-themoviedb:
-   api_key: <API_KEY>
 email:
    title: 'Default Email Header'
 plex:
-   server: 'localhost'
+   server: <SERVER_IP>
    api_key: <API_KEY>
 mail:
    address: <MAIL_SERVER_ADDRESS>

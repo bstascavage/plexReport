@@ -17,11 +17,6 @@ class Plex
             self.class.base_uri "http://#{$config['plex']['server']}:32400/"
         end
     end
-#    begin
-#        $config = YAML.load_file(File.join(File.expand_path(File.dirname(__FILE__)), '../etc/config.yaml') )
-#    rescue Errno::ENOENT => e
-#        abort('Configuration file not found.  Exiting...')
-#    end
 
     base_uri "http://localhost:32400/"
     format :xml

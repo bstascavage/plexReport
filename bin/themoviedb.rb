@@ -17,7 +17,7 @@ class TheMovieDB
     format :json
 
     def initialize(config)
-    	$token = config['themoviedb']['api_key']    
+    	$token = '974eddb0f95ce2b912b9b37a63358823'
     end
 
     def get(query, args=nil)
