@@ -19,7 +19,7 @@ The following are needed to run this script:
 
 1.  Clone this repo on your server:
 
-    `git clone git@github.com:bstascavage/plexReport.git`
+    `git clone https://github.com/bstascavage/plexReport.git`
 2.  Change to the plexReport directory
 3.  Install the blunder gem (http://bundler.io/)
 
