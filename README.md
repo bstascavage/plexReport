@@ -13,13 +13,13 @@ The following are needed to run this script:
 1.  Ruby installed (at least version 1.9.3)
 2.  themoviedb set as your Agent for your Movie section
 3.  thetvdb.org set as your Agent for your TV section
-4.  Your Plex API key.  This can be found by searching for your device here: https://plex.tv/devices.xml
+4.  Your Plex API key.  This can be found by searching for your device here (it is the 'token' field): https://plex.tv/devices.xml
 
 ## Installation (Linux)
 
 1.  Clone this repo on your server:
 
-    `git clone git@github.com:bstascavage/plexReport.git`
+    `git clone https://github.com/bstascavage/plexReport.git`
 2.  Change to the plexReport directory
 3.  Install the blunder gem (http://bundler.io/)
 
@@ -36,25 +36,25 @@ The following are needed to run this script:
 ## Config file
 
 ###### email
-`title` - Banner title for the email body
+`title` - Banner title for the email body.  Required.
 
 ###### plex
-`server` - IP address of your Plex server.  Defaults to 'localhost'
+`server` - IP address of your Plex server.  Defaults to 'localhost'.  Optional.
 
-`api_key` - Your Plex API key
+`api_key` - Your Plex API key.  Required.
 
 ###### mail
-`address` - Address of your smtp relay server.  (ie smtp.gmail.com)
+`address` - Address of your smtp relay server.  (ie smtp.gmail.com).  Required.
 
-`port` - Mail port to use.  Default is 25.  (Use 587 for gmail.com)
+`port` - Mail port to use.  Default is 25.  (Use 587 for gmail.com).  Required
 
-`username` - Email address to send the email from
+`username` - Email address to send the email from.  Required.
 
-`password` - Password for hte email set above
+`password` - Password for hte email set above.  Required.
 
-`from` - Display name of the sender
+`from` - Display name of the sender.  Required.
 
-`subject` - Subject of the email.  Note that the script will automatically add a date to the end of the subject
+`subject` - Subject of the email.  Note that the script will automatically add a date to the end of the subject.  Required.
 
 ## Images
 
