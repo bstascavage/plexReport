@@ -56,6 +56,16 @@ The following are needed to run this script:
 
 `subject` - Subject of the email.  Note that the script will automatically add a date to the end of the subject.  Required.
 
+`recipients_email` - Email addresses of any additional recipients, outside of your Plex friends.  Optional.
+
+`recipients` - Plex usernames of any Plex friends to be notified.  To be used with the -n option.  Optional
+
+## Command-line Options
+
+All commandline options can be seen by running `plexReport.rb --help`
+
+`-n, --no-plex-email` - Do not send emails to Plex friends.  Can be used with the `recipients_email` and `recipients` config file option to customize email recipients.
+
 ## Images
 
 New Episodes:
