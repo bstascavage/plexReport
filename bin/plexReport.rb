@@ -6,6 +6,7 @@ require 'date'
 require 'yaml'
 require 'erb'
 require 'logger'
+require 'optparse'
 
 require_relative 'plex'
 require_relative 'themoviedb'
@@ -18,6 +19,17 @@ require_relative 'mailReport'
 # Email: brian@stascavage.com
 #
 class PlexReport
+    $options = {
+	:emails => true
+    }
+    OptionParser.new do |opts|
+    opts.banner = "PlexReport: A script for sending out regular Plex summaries\nUsage: plexReport.rb [$options]"
+
+    opts.on("-n", "--no-plex-email", "Do not send emails to Plex friends") do |v|
+        $options[:emails] = false
+    end
+    end.parse!
+
     def initialize
         begin
             $config = YAML.load_file(File.join(File.expand_path(File.dirname(__FILE__)), '../etc/config.yaml') )
@@ -182,7 +194,7 @@ def main
 
     YAML.load_file(File.join(File.expand_path(File.dirname(__FILE__)), '../etc/config.yaml') )
     template = ERB.new File.new(File.join(File.expand_path(File.dirname(__FILE__)), "../etc/email_body.erb") ).read, nil, "%"
-    mail = MailReport.new($config)
+    mail = MailReport.new($config, $options[:emails])
     mail.sendMail(template.result(binding))
 end
 main()

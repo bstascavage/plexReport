@@ -11,8 +11,9 @@ require_relative 'plexTv'
 # Email: brian@stascavage.com
 #
 class MailReport
-    def initialize(config)
+    def initialize(config, emails)
         $config = config
+	$plexEmails = emails
         
         if !$config['mail']['port'].nil?
             $port = $config['mail']['port']
@@ -43,14 +44,35 @@ class MailReport
         users = Array.new
 
         # Logic for pulling the email accounts from Plex.tv
-        plexTv = PlexTv.new($config)
-        plex_users = plexTv.get('/pms/friends/all')
-        plex_users['MediaContainer']['User'].each do | user |
-            users.push(user['email'])
-        end
+	plexTv = PlexTv.new($config)
+
+	if $plexEmails
+            plex_users = plexTv.get('/pms/friends/all')
+            plex_users['MediaContainer']['User'].each do | user |
+                users.push(user['email'])
+            end
+	end
+	if !$config['mail']['recipients'].nil? || !$config['mail']['recipients_email'].nil?
+	    if !$config['mail']['recipients_email'].nil?
+	        $config['mail']['recipients_email'].each do | recipient |
+		    users.push(recipient)
+	        end
+	    end
+	    if !$config['mail']['recipients'].nil?
+		$config['mail']['recipients'].each do | recipient |
+		    plex_users = plexTv.get('/pms/friends/all')
+                    plex_users['MediaContainer']['User'].each do | user |
+		        if user['username'] == recipient
+                            users.push(user['email'])
+			end
+                    end
+		end
+	    end
+	end
 
         #Get owner's email as well and add it to the list of recpients
         users.push(plexTv.get('/users/account')['user']['email'][0])
+
         users.each do | user |
             mail = Mail.new do
                 from "#{$config['mail']['from']} <#{$config['mail']['username']}>"
