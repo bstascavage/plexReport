@@ -13,7 +13,7 @@ The following are needed to run this script:
 1.  Ruby installed (at least version 1.9.3)
 2.  themoviedb set as your Agent for your Movie section
 3.  thetvdb.org set as your Agent for your TV section
-4.  Your Plex API key.  This can be found by searching for your device here: https://plex.tv/devices.xml
+4.  Your Plex API key.  This can be found by searching for your device here (it is the 'token' field): https://plex.tv/devices.xml
 
 ## Installation (Linux)
 
