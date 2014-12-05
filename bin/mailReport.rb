@@ -43,7 +43,8 @@ class MailReport
 
         users = Array.new
 
-        # Logic for pulling the email accounts from Plex.tv
+        # Logic for pulling the email accounts from Plex.tv and/or the
+	# config file
 	plexTv = PlexTv.new($config)
 
 	if $plexEmails

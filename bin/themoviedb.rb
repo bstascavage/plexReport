@@ -3,8 +3,8 @@ require 'rubygems'
 require 'json'
 require 'httparty'
 
-# Class that interacts with themoviedb.org.  Make sure your API key is set in
-# etc/config.yaml.  Note that themoviedb.org limits API calls to 30 every 10 seconds,
+# Class that interacts with themoviedb.org. 
+# Note that themoviedb.org limits API calls to 30 every 10 seconds,
 # hence the sleep in this code.
 #
 # Author: Brian Stascavage

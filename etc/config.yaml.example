@@ -12,4 +12,4 @@ mail:
    from: <FROM_DISPLAY_NAME>  
    subject: <EMAIL_SUBJECT>
    recipients_email: ['TEST1@EMAIL.COM', 'TEST2@EMAIL.COM']
-   recipients: ['Demeja']
+   recipients: ['PLEX_USER']

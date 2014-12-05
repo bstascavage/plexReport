@@ -11,6 +11,7 @@ require 'optparse'
 require_relative 'plex'
 require_relative 'themoviedb'
 require_relative 'thetvdb'
+require_relative 'omdb'
 require_relative 'mailReport'
 
 # Class for parsing the Plex server for new movies and TV Shows
@@ -56,13 +57,14 @@ class PlexReport
     # Method for retrieving information for all movies for a given period of time. 
     def getMovies
     	moviedb = TheMovieDB.new($config)
-	    plex = Plex.new($config)
-	    library = plex.get('/library/recentlyAdded')
-	    movies = Array.new
+	omdb = OMDB.new
+	plex = Plex.new($config)
+	library = plex.get('/library/recentlyAdded')
+	movies = Array.new
 
-	    library['MediaContainer']['Video'].each do | element |
-	        if (Time.now.to_i - element['addedAt'].to_i < 604800)
-		        plex_movie = plex.get("/library/metadata/#{element['ratingKey']}")['MediaContainer']['Video']
+	library['MediaContainer']['Video'].each do | element |
+	    if (Time.now.to_i - element['addedAt'].to_i < 604800)
+	        plex_movie = plex.get("/library/metadata/#{element['ratingKey']}")['MediaContainer']['Video']
     	        
                 # This is some contrivulted logic to strip off the moviedb.org id
                 # from the Plex mediadata.  I wish Plex made this information
@@ -70,8 +72,10 @@ class PlexReport
                 movie_id = plex.get("/library/metadata/#{element['ratingKey']}")['MediaContainer']['Video']['guid'].gsub(/com.plexapp.agents.themoviedb:\/\//, '').gsub(/\?lang=en/, '')
 
     	        if !movie_id.include?('local') 
-	                begin
+                    begin
        	                movie = moviedb.get("movie/#{movie_id}")
+			omdb_result = omdb.get(movie['imdb_id'])
+
                         $logger.info("Reporting Movie: #{movie['title']}")
 	                    movies.push({ 
 	                        :id       => movie['id'],
@@ -81,14 +85,16 @@ class PlexReport
 	                        :tagline  => movie['tagline'],
 	                        :synopsis => movie['overview'],
 	                        :runtime  => movie['runtime'],
-	                        :imdb     => "http://www.imdb.com/title/#{movie['imdb_id']}"
+	                        :imdb     => "http://www.imdb.com/title/#{movie['imdb_id']}",
+				:imdb_rating => omdb_result['imdbRating'],
+				:imdb_votes  => omdb_result['imdbVotes']
 		            })
     	            rescue
                     end
 	            end
             end
     	end
-	    return movies.sort_by { |hsh| hsh[:title] }
+	return movies.sort_by { |hsh| hsh[:title] }
     end
 
     # Method for getting new TV episodes for a given time period.  
