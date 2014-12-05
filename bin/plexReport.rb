@@ -20,14 +20,20 @@ require_relative 'mailReport'
 #
 class PlexReport
     $options = {
-	:emails => true
+	:emails => true,
+	:library_names => false
     }
-    OptionParser.new do |opts|
-    opts.banner = "PlexReport: A script for sending out regular Plex summaries\nUsage: plexReport.rb [$options]"
 
-    opts.on("-n", "--no-plex-email", "Do not send emails to Plex friends") do |v|
-        $options[:emails] = false
-    end
+    OptionParser.new do |opts|
+        opts.banner = "PlexReport: A script for sending out regular Plex summaries\nUsage: plexReport.rb [$options]"
+
+        opts.on("-n", "--no-plex-email", "Do not send emails to Plex friends") do |opt|
+            $options[:emails] = false
+        end
+
+        opts.on("-l", "--add-library-names", "Adding the Library name in front of the movie/tv show.  To be used with custom Libraries") do |opt|
+   	    $options[:library_names] = true
+        end
     end.parse!
 
     def initialize
@@ -158,7 +164,7 @@ class PlexReport
                                                 tv_episodes[:seasons].push({
                                                     :id             => show_id,
                                                     :series_name    => show['Series']['SeriesName'],
-                                                   :image          => "http://thetvdb.com/banners/#{show['Series']['poster']}",
+                                                    :image          => "http://thetvdb.com/banners/#{show['Series']['poster']}",
                                                     :season         => [element['index']],
                                                     :network        => show['Series']['Network'],
                                                     :imdb           => "http://www.imdb.com/title/#{show['Series']['IMDB_ID']}",
