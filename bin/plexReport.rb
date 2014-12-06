@@ -22,7 +22,8 @@ require_relative 'mailReport'
 class PlexReport
     $options = {
 	:emails => true,
-	:library_names => false
+	:library_names => false,
+	:test_email => false
     }
 
     OptionParser.new do |opts|
@@ -35,6 +36,10 @@ class PlexReport
         opts.on("-l", "--add-library-names", "Adding the Library name in front of the movie/tv show.  To be used with custom Libraries") do |opt|
    	    $options[:library_names] = true
         end
+
+	opts.on("-t", "--test-email", "Send email only to the Plex owner (ie yourself).  For testing purposes") do |opt|
+	    $options[:test_email] = true
+	end
     end.parse!
 
     def initialize
@@ -206,7 +211,7 @@ def main
 
     YAML.load_file(File.join(File.expand_path(File.dirname(__FILE__)), '../etc/config.yaml') )
     template = ERB.new File.new(File.join(File.expand_path(File.dirname(__FILE__)), "../etc/email_body.erb") ).read, nil, "%"
-    mail = MailReport.new($config, $options[:emails])
+    mail = MailReport.new($config, $options)
     mail.sendMail(template.result(binding))
 end
 main()

@@ -11,9 +11,10 @@ require_relative 'plexTv'
 # Email: brian@stascavage.com
 #
 class MailReport
-    def initialize(config, emails)
+    def initialize(config, options)
         $config = config
-	$plexEmails = emails
+	$plexEmails = options[:emails]
+	$testEmail = options[:test_email]
         
         if !$config['mail']['port'].nil?
             $port = $config['mail']['port']
@@ -47,27 +48,29 @@ class MailReport
 	# config file
 	plexTv = PlexTv.new($config)
 
-	if $plexEmails
-            plex_users = plexTv.get('/pms/friends/all')
-            plex_users['MediaContainer']['User'].each do | user |
-                users.push(user['email'])
-            end
-	end
-	if !$config['mail']['recipients'].nil? || !$config['mail']['recipients_email'].nil?
-	    if !$config['mail']['recipients_email'].nil?
-	        $config['mail']['recipients_email'].each do | recipient |
-		    users.push(recipient)
-	        end
+	if !$testEmail
+      	    if $plexEmails
+                plex_users = plexTv.get('/pms/friends/all')
+                plex_users['MediaContainer']['User'].each do | user |
+                    users.push(user['email'])
+                end
 	    end
-	    if !$config['mail']['recipients'].nil?
-		$config['mail']['recipients'].each do | recipient |
-		    plex_users = plexTv.get('/pms/friends/all')
-                    plex_users['MediaContainer']['User'].each do | user |
-		        if user['username'] == recipient
-                            users.push(user['email'])
-			end
-                    end
-		end
+	    if !$config['mail']['recipients'].nil? || !$config['mail']['recipients_email'].nil?
+	        if !$config['mail']['recipients_email'].nil?
+	            $config['mail']['recipients_email'].each do | recipient |
+		        users.push(recipient)
+	            end
+	        end
+	        if !$config['mail']['recipients'].nil?
+		    $config['mail']['recipients'].each do | recipient |
+		        plex_users = plexTv.get('/pms/friends/all')
+                        plex_users['MediaContainer']['User'].each do | user |
+		            if user['username'] == recipient
+                                users.push(user['email'])
+			    end
+                        end
+		    end
+	        end
 	    end
 	end
 
