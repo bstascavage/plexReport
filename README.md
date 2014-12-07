@@ -67,6 +67,7 @@ All commandline options can be seen by running `plexReport.rb --help`
 `-n, --no-plex-email` - Do not send emails to Plex friends.  Can be used with the `recipients_email` and `recipients` config file option to customize email recipients.
 
 `-l, --add-library-names` - Adding the Library name in front of the movie/tv show.  To be used with custom Libraries
+
 `-t, --test-email` - Send email only to the Plex owner (ie yourself).  For testing purposes
 
 ## Images
