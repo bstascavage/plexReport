@@ -70,6 +70,8 @@ All commandline options can be seen by running `plexReport.rb --help`
 
 `-t, --test-email` - Send email only to the Plex owner (ie yourself).  For testing purposes
 
+`-d, --detailed-email` - Send more details in the email, such as movie ratings, actors, etc
+
 ## Images
 
 New Episodes:
@@ -82,3 +84,6 @@ New Seasons:
 
 New Movies:
 ![alt tag](http://i.imgur.com/E3Q85uU.png)
+
+New Movies (detailed view):
+![alt tag](http://i.imgur.com/9BHiQHW.png)
