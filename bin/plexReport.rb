@@ -189,8 +189,6 @@ class PlexReport
                                 end           
                             end
                         end
-                            
-                        $logger.info("Reporting #{show['Series']['SeriesName']} S#{episode['SeasonNumber']} E#{episode['EpisodeNumber']}")
                     end
                 end
             end
