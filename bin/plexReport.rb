@@ -21,9 +21,10 @@ require_relative 'mailReport'
 #
 class PlexReport
     $options = {
-	:emails => true,
+	:emails        => true,
 	:library_names => false,
-	:test_email => false
+	:test_email    => false,
+	:detail_email  => false
     }
 
     OptionParser.new do |opts|
@@ -40,6 +41,10 @@ class PlexReport
 	opts.on("-t", "--test-email", "Send email only to the Plex owner (ie yourself).  For testing purposes") do |opt|
 	    $options[:test_email] = true
 	end
+
+	opts.on("-d", "--detailed-email", "Send more details in the email, such as movie ratings, actors, etc") do |opt|
+            $options[:detail_email] = true
+        end
     end.parse!
 
     def initialize
@@ -84,16 +89,21 @@ class PlexReport
 
                         $logger.info("Reporting Movie: #{movie['title']}")
 	                    movies.push({ 
-	                        :id       => movie['id'],
-	                        :title    => movie['title'],
-	                        :image    => "https://image.tmdb.org/t/p/w154#{movie['poster_path']}",
-	                        :date     => Time.new(movie['release_date']).year,
-	                        :tagline  => movie['tagline'],
-	                        :synopsis => movie['overview'],
-	                        :runtime  => movie['runtime'],
-	                        :imdb     => "http://www.imdb.com/title/#{movie['imdb_id']}",
+	                        :id          => movie['id'],
+	                        :title       => movie['title'],
+	                        :image       => "https://image.tmdb.org/t/p/w154#{movie['poster_path']}",
+	                        :date        => omdb_result['Year'],
+	                        :tagline     => movie['tagline'],
+	                        :synopsis    => movie['overview'],
+	                        :runtime     => movie['runtime'],
+	                        :imdb        => "http://www.imdb.com/title/#{movie['imdb_id']}",
 				:imdb_rating => omdb_result['imdbRating'],
-				:imdb_votes  => omdb_result['imdbVotes']
+				:imdb_votes  => omdb_result['imdbVotes'],
+				:director    => omdb_result['Director'],
+                                :actors      => omdb_result['Actors'],
+                                :genre       => omdb_result['Genre'],
+				:released    => omdb_result['Released'],
+				:rating      => omdb_result['Rated']
 		            })
     	            rescue
                     end
