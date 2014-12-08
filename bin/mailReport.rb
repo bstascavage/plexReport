@@ -81,7 +81,7 @@ class MailReport
             mail = Mail.new do
                 from "#{$config['mail']['from']} <#{$config['mail']['username']}>"
                 to user
-                subject $config['mail']['subject'] + Time.now.strftime("%m/%d/%Y")
+                subject $config['mail']['subject'] + " " + Time.now.strftime("%m/%d/%Y")
                 content_type 'text/html; charset=UTF-8'
                 body body
             end

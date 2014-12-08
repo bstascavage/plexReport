@@ -97,7 +97,7 @@ class PlexReport
 		            })
     	            rescue
                     end
-	            end
+                end
             end
     	end
 	return movies.sort_by { |hsh| hsh[:title] }
