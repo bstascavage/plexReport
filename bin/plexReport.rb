@@ -170,10 +170,10 @@ class PlexReport
                                             dvd_season_mapping[episode_count['SeasonNumber']] =
                                             episode_count['DVD_episodenumber'].to_i
                                         end
-                                    end
+                                    end	
                                     if (season_mapping[element['index']].to_i == element['leafCount'].to_i ||
                                         dvd_season_mapping[element['index']].to_i == element['leafCount'].to_i )
-                                        if !tv_episodes[:new].detect { |f| f[:id].to_i == show_id.to_i }
+                                        #if !tv_episodes[:new].detect { |f| f[:id].to_i == show_id.to_i }
                                             if tv_episodes[:seasons].detect { |f| f[:id].to_i == show_id.to_i }
                                                 tv_episodes[:seasons].each do |x|
                                                     if x[:id] == show_id
@@ -193,7 +193,7 @@ class PlexReport
                                                     :synopsis       => show['Series']['Overview']
                                                 })
                                             end
-                                        end 
+                                        #end 
                                     end
                                 rescue
                                 end           
