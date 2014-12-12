@@ -109,7 +109,7 @@ class PlexReport
             # This is some contrivulted logic to strip off the moviedb.org id
             # from the Plex mediadata.  I wish Plex made this information
             # easier to get
-            if plex_movie['ratingKey']}")['MediaContainer']['Video']['guid'].include?("themoviedb
+            if plex.get("/library/metadata/#{plex_movie['ratingKey']}")['MediaContainer']['Video']['guid'].include?("themoviedb")
                 movie_id = plex.get("/library/metadata/#{plex_movie['ratingKey']}")['MediaContainer']['Video']['guid'].gsub(/com.plexapp.agents.themoviedb:\/\//, '').gsub(/\?lang.*/, '')
             else
                 return nil

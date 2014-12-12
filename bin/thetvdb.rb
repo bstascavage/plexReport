@@ -25,8 +25,8 @@ class TheTVDB
             $logger.error("thetvdb.org is providing wrong headers.  Blah!")
             return nil
         end
-#        pp response
-#        pp response.code
+        pp response
+        pp response.code
 
 
 
