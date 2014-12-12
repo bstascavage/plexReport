@@ -27,10 +27,13 @@ class OMDB
                 return 'nil'
             end
             while retry_attempts < 3 do
-                $logger.error "Could not connect to omdb.com.  Will retry in 30 seconds"
+                $logger.error("Could not connect to omdb.  Will retry in 30 seconds")
                 sleep(30)
-                self.class.get(query)
-                retry_attempts += 1
+                $retry_attempts += 1
+                $logger.debug("Retry attempt: #{$retry_attempts}")
+                if self.get(query).code == 200
+                    break
+                end
             end
             if retry_attempts >= 3
                 $logger.error "Could not connect to omdb.  Exiting script."

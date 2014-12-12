@@ -25,10 +25,7 @@ class TheTVDB
             $logger.error("thetvdb.org is providing wrong headers.  Blah!")
             return nil
         end
-        pp response
-        pp response.code
-
-
+        $logger.debug("Response from thetvdb: Code: #{response.code}.")
 
         if response.code != 200
             if response.nil?
@@ -37,10 +34,13 @@ class TheTVDB
             while $retry_attempts < 3 do
                 $logger.error("Could not connect to thetvdb.com.  Will retry in 30 seconds")
                 sleep(30)
-                self.get(query)
                 $retry_attempts += 1
+                $logger.debug("Retry attempt: #{$retry_attempts}")
+                if self.get(query).code == 200
+                    break
+                end
             end
-            if retry_attempts >= 3
+            if $retry_attempts >= 3
                 $logger.error("Could not connect to thetvdb.  Exiting script.")
                 exit
             end

@@ -21,11 +21,12 @@ require_relative 'mailReport'
 #
 class PlexReport
     $options = {
-	:emails        => true,
-	:library_names => false,
-	:test_email    => false,
-	:detail_email  => false,
-	:full	       => false
+        :emails        => true,
+        :library_names => false,
+        :test_email    => false,
+        :detail_email  => false,
+        :full	       => false,
+        :debug         => false
     }
 
     OptionParser.new do |opts|
@@ -50,6 +51,10 @@ class PlexReport
     	opts.on("-t", "--test-email", "Send email only to the Plex owner (ie yourself).  For testing purposes") do |opt|
 	        $options[:test_email] = true
 	    end
+
+        opts.on("-v", "--verbose", "Enable verbose debug logging") do |opt|
+            $options[:verbose] = true
+        end
     end.parse!
 
     def initialize
@@ -62,6 +67,12 @@ class PlexReport
         begin
             $logging_path = File.join(File.expand_path(File.dirname(__FILE__)), '../plexReport.log') 
             $logger = Logger.new($logging_path)
+            
+            if $options[:verbose]
+                $logger.level = Logger::DEBUG
+            else
+                $logger.level = Logger::INFO
+            end
         rescue
             abort('Log file not found.  Exiting...')
         end

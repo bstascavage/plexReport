@@ -37,8 +37,11 @@ class TheMovieDB
             while $retry_attempts < 3 do
                 $logger.error("Could not connect to themoviedb.org.  Will retry in 30 seconds")
                 sleep(30)
-                self.get(query)
                 $retry_attempts += 1
+                $logger.debug("Retry attempt: #{$retry_attempts}")
+                if self.get(query).code == 200
+                    break
+                end
             end
             if $retry_attempts >= 3
                 $logger.error("Could not connect to themoviedb.org.  Exiting script")
