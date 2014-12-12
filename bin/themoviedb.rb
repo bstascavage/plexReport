@@ -28,7 +28,26 @@ class TheMovieDB
         end
 
         response = self.class.get(new_query, :verify => false)
-	sleep 0.4
+
+        retry_attempts = 0
+
+        if response.code != 200
+            if response.nil?
+                return 'nil'
+            end
+            while retry_attempts < 3 do
+                $logger.error("Could not connect to themoviedb.org.  Will retry in 30 seconds")
+                sleep(30)
+                self.class.get(query)
+                retry_attempts += 1
+            end
+            if retry_attempts >= 3
+                $logger.error("Could not connect to themoviedb.org.  Exiting script")
+                exit
+            end
+        end
+
+    	sleep 0.4
         return response
     end
 end
