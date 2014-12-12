@@ -18,6 +18,7 @@ class TheMovieDB
 
     def initialize(config)
     	$token = '974eddb0f95ce2b912b9b37a63358823'
+        $retry_attempt = 0 
     end
 
     def get(query, args=nil)
@@ -28,7 +29,28 @@ class TheMovieDB
         end
 
         response = self.class.get(new_query, :verify => false)
-	sleep 0.4
+
+        if response.code != 200
+            if response.nil?
+                return 'nil'
+            end
+            while $retry_attempts < 3 do
+                $logger.error("Could not connect to themoviedb.org.  Will retry in 30 seconds")
+                sleep(30)
+                $retry_attempts += 1
+                $logger.debug("Retry attempt: #{$retry_attempts}")
+                if self.get(query).code == 200
+                    break
+                end
+            end
+            if $retry_attempts >= 3
+                $logger.error("Could not connect to themoviedb.org.  Exiting script")
+                exit
+            end
+        end
+
+    	sleep 0.6
+        $retry_attempt = 0
         return response
     end
 end
