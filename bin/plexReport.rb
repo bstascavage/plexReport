@@ -114,6 +114,7 @@ class PlexReport
         plex = Plex.new($config)
         movies = Array.new
 
+        if plex_movie.is_a?(Hash)
         if (Time.now.to_i - plex_movie['addedAt'].to_i < 604800)
             plex_movie = plex.get("/library/metadata/#{plex_movie['ratingKey']}")['MediaContainer']['Video']
 
@@ -279,6 +280,7 @@ class PlexReport
                     end
                 end
             end
+        end
         end
     return tv_episodes
     end
