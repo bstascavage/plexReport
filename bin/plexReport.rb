@@ -114,6 +114,7 @@ class PlexReport
         plex = Plex.new($config)
         movies = Array.new
 
+        $logger.debug(plex_movie)
         if plex_movie.is_a?(Hash)
         if (Time.now.to_i - plex_movie['addedAt'].to_i < 604800)
             plex_movie = plex.get("/library/metadata/#{plex_movie['ratingKey']}")['MediaContainer']['Video']
@@ -159,6 +160,7 @@ class PlexReport
                 end
             end
         end
+        end
     end
 
 
@@ -197,8 +199,8 @@ class PlexReport
         if (Time.now.to_i - last_updated < 604800) 
             show_id = plex.get("/library/metadata/#{tv_show['ratingKey']}")['MediaContainer']['Directory']['guid'].gsub(/.*:\/\//, '').gsub(/\?.*/, '')
 
-            show = thetvdb.get("series/#{show_id}/all/")['Data']
             begin
+                show = thetvdb.get("series/#{show_id}/all/")['Data']
                 episodes = show['Episode'].sort_by { |hsh| hsh[:FirstAired] }.reverse!
             rescue
                 $logger.error("Connection to thetvdb.com failed while retrieving info for #{tv_show['title']}")
@@ -280,7 +282,6 @@ class PlexReport
                     end
                 end
             end
-        end
         end
     return tv_episodes
     end
