@@ -122,7 +122,12 @@ class PlexReport
             # easier to get
             if plex.get("/library/metadata/#{plex_movie['ratingKey']}")['MediaContainer']['Video']['guid'].include?("themoviedb")
                 movie_id = plex.get("/library/metadata/#{plex_movie['ratingKey']}")['MediaContainer']['Video']['guid'].gsub(/com.plexapp.agents.themoviedb:\/\//, '').gsub(/\?lang.*/, '')
+            elsif plex.get("/library/metadata/#{plex_movie['ratingKey']}")['MediaContainer']['Video']['guid'].include?("imdb")
+                movie_id = plex.get("/library/metadata/#{plex_movie['ratingKey']}")['MediaContainer']['Video']['guid'].gsub(/com.plexapp.agents.imdb:\/\//, '').gsub(/\?lang.*/, '')
+                $logger.debug(movie_id)
+                return nil
             else
+                $logger.error("Movie #{plex_movie['title']} using incompatiable agent")
                 return nil
             end
 
