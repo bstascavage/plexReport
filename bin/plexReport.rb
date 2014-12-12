@@ -47,9 +47,9 @@ class PlexReport
             $options[:emails] = false
         end
 
-	opts.on("-t", "--test-email", "Send email only to the Plex owner (ie yourself).  For testing purposes") do |opt|
-	    $options[:test_email] = true
-	end
+    	opts.on("-t", "--test-email", "Send email only to the Plex owner (ie yourself).  For testing purposes") do |opt|
+	        $options[:test_email] = true
+	    end
     end.parse!
 
     def initialize
@@ -69,39 +69,34 @@ class PlexReport
         $logger.info("Starting up PlexReport")
     end
 
+
+    # Method for parsing the Plex library for every movie
     def getMovies
     	moviedb = TheMovieDB.new($config)
     	omdb = OMDB.new
 	    plex = Plex.new($config)
 	    movies = Array.new
 
-	    if $options[:full]
-	        library = plex.get('/library/sections')
-            library['MediaContainer']['Directory'].each do | element |
-                if element['type'] == 'movie'
-		            library = plex.get("/library/sections/#{element['key']}/all")
+	    library = plex.get('/library/sections')
+        library['MediaContainer']['Directory'].each do | element |
+            if element['type'] == 'movie'
+		        library = plex.get("/library/sections/#{element['key']}/all")
         		    
-                    library['MediaContainer']['Video'].each do | element |
-		                movie = self.getMovieInfo(element)
-		                if !movie.nil?
-			                movies.push(movie)
-		                end
+                library['MediaContainer']['Video'].each do | element |
+		            movie = self.getMovieInfo(element)
+		            if !movie.nil?
+		                movies.push(movie)
 		            end
-	            end
-            end
-        else
-            library = plex.get('/library/recentlyAdded')
-
-            library['MediaContainer']['Video'].each do | element |
-                movie = self.getMovieInfo(element)
-                if !movie.nil?
-                    movies.push(movie)
-                end
-            end
-	    end
+		        end
+	        end
+        end
 	    return movies.sort_by { |hsh| hsh[:title] }
     end
-    
+  
+ 
+    # For a given movie, pulls it's metadata from the search agent
+    # Parameters: 
+    #   movie: Plex movie object, from '/library/sections/<movie_library_id/all' 
     def getMovieInfo(plex_movie)
         moviedb = TheMovieDB.new($config)
         omdb = OMDB.new
@@ -146,157 +141,139 @@ class PlexReport
     end
 
 
-    # Method for getting new TV episodes for a given time period.  
-    # This only returns new episodes, not seasons
-    def getNewTVEpisodes
+    # Method for getting new TV shows from the Plx server  
+    def getTVEpisodes
         plex = Plex.new($config)
         tv_episodes = Hash.new
         tv_episodes[:new] = []
         tv_episodes[:seasons] = []
 
-        if $options[:full]
-            library = plex.get('/library/sections')
-            library['MediaContainer']['Directory'].each do | element |
-                if element['type'] == 'show'
-                    library = plex.get("/library/sections/#{element['key']}/all")
-                    library['MediaContainer']['Directory'].each do | element |
-                        tv_episodes = self.getTVInfo(element, tv_episodes)
-                    end
-                end
-            end
-        else
-            library = plex.get('/library/recentlyAdded')
-            library['MediaContainer']['Directory'].each do | element |
-                if element['type'].include?('season')
+        library = plex.get('/library/sections')
+        library['MediaContainer']['Directory'].each do | element |
+            if element['type'] == 'show'
+                library = plex.get("/library/sections/#{element['key']}/all")
+                library['MediaContainer']['Directory'].each do | element |
                     tv_episodes = self.getTVInfo(element, tv_episodes)
                 end
             end
         end
 
-#	    library['MediaContainer']['Directory'].each do | element |
-#            tv_episodes = self.getTVInfo(element, tv_episodes)
-#        end
         tv_episodes[:new].sort_by! { |hsh| hsh[:series_name] }
         tv_episodes[:seasons].sort_by! { |hsh| hsh[:series_name] }
         return tv_episodes 
     end
 
+
+    # For a given TV show, determine if thre are new episodes and/or seasons, and adds them approprately
+    # Parameters:
+    #   tv_show: Plex TV show object from 'library/sections/<tv_show_library_id>/all'
+    #   tv_episodes: Array of Hashes of all episodes and seasons
     def getTVInfo(tv_show, tv_episodes)
         thetvdb = TheTVDB.new
         plex = Plex.new($config)
 
         last_updated = plex.get("/library/metadata/#{tv_show['ratingKey']}")['MediaContainer']['Directory']['updatedAt'].to_i
         if (Time.now.to_i - last_updated < 604800) 
-#        if tv_show['type'].include?('season')
-#            if (Time.now.to_i - tv_show['addedAt'].to_i < 604800)
-                    show_id = plex.get("/library/metadata/#{tv_show['ratingKey']}")['MediaContainer']['Directory']['guid'].gsub(/.*:\/\//, '').gsub(/\?.*/, '')
+            show_id = plex.get("/library/metadata/#{tv_show['ratingKey']}")['MediaContainer']['Directory']['guid'].gsub(/.*:\/\//, '').gsub(/\?.*/, '')
 
-                    show = thetvdb.get("series/#{show_id}/all/")['Data']
-                    begin
-                        episodes = show['Episode'].sort_by { |hsh| hsh[:FirstAired] }.reverse!
-                    rescue
-                        $logger.error("Connection to thetvdb.com failed while retrieving info for #{tv_show['title']}")
-                        return tv_episodes
-                    end
+            show = thetvdb.get("series/#{show_id}/all/")['Data']
+            begin
+                episodes = show['Episode'].sort_by { |hsh| hsh[:FirstAired] }.reverse!
+            rescue
+                $logger.error("Connection to thetvdb.com failed while retrieving info for #{tv_show['title']}")
+                return tv_episodes
+            end
 
-                    episodes.each do | episode |
-                        airdate = nil
-                        begin
-                            airdate_date = Date.parse(episode['FirstAired'])
-                        rescue
+            episodes.each do | episode |
+                airdate = nil
+                begin
+                    airdate_date = Date.parse(episode['FirstAired'])
+                rescue
+                end
+
+                if !airdate_date.nil?
+                    if ((Date.parse(Time.now.to_s) - airdate_date).round < 8 &&
+                        (Date.parse(Time.now.to_s) - airdate_date).round > 0)
+                        if !tv_episodes[:new].any? {|h| h[:id] == show_id}
+                            $logger.info("Reporting #{show['Series']['SeriesName']} Season #{episode['SeasonNumber']} Episode #{episode['EpisodeNumber']}")
+                            tv_episodes[:new].push({
+                                :id             => show_id,
+                                :series_name    => show['Series']['SeriesName'],
+                                :image          => "http://thetvdb.com/banners/#{show['Series']['poster']}",
+                                :network        => show['Series']['Network'],
+                                :imdb           => "http://www.imdb.com/title/#{show['Series']['IMDB_ID']}",
+                                :title          => episode['EpisodeName'],
+                                :episode_number => "S#{episode['SeasonNumber']} E#{episode['EpisodeNumber']}",
+                                :synopsis       => episode['Overview'],
+                                :airdate        => episode['FirstAired']
+                            })
                         end
-
-                        if !airdate_date.nil?
-                            if ((Date.parse(Time.now.to_s) - airdate_date).round < 8 &&
-                                (Date.parse(Time.now.to_s) - airdate_date).round > 0)
-                                if !tv_episodes[:new].any? {|h| h[:id] == show_id}
-                                    $logger.info("Reporting #{show['Series']['SeriesName']} Season #{episode['SeasonNumber']} Episode #{episode['EpisodeNumber']}")
-                                    tv_episodes[:new].push({
-                                        :id             => show_id,
-                                        :series_name    => show['Series']['SeriesName'],
-                                        :image          => "http://thetvdb.com/banners/#{show['Series']['poster']}",
-                                        :network        => show['Series']['Network'],
-                                        :imdb           => "http://www.imdb.com/title/#{show['Series']['IMDB_ID']}",
-                                        :title          => episode['EpisodeName'],
-                                        :episode_number => "S#{episode['SeasonNumber']} E#{episode['EpisodeNumber']}",
-                                        :synopsis       => episode['Overview'],
-                                        :airdate        => episode['FirstAired']
-                                    })
-                                end
-                            elsif ((Date.parse(Time.now.to_s) - Date.parse(Time.at(last_updated).to_s)).round < 7)
-#                                begin
-                                    season_mapping = Hash.new
-                                    dvd_season_mapping = Hash.new
-                                    show['Episode'].each do | episode_count |
-                                        season_mapping[episode_count['SeasonNumber']] = 
-                                        episode_count['EpisodeNumber']
-                                    end
-                                    show['Episode'].each do | episode_count |
-                                        if !episode_count['DVD_episodenumber'].nil?
-                                            dvd_season_mapping[episode_count['SeasonNumber']] =
-                                            episode_count['DVD_episodenumber'].to_i
-                                        end
-                                    end 
+                    elsif ((Date.parse(Time.now.to_s) - Date.parse(Time.at(last_updated).to_s)).round < 7)
+                        season_mapping = Hash.new
+                        dvd_season_mapping = Hash.new
+                        show['Episode'].each do | episode_count |
+                            season_mapping[episode_count['SeasonNumber']] = episode_count['EpisodeNumber']
+                        end
+                        show['Episode'].each do | episode_count |
+                            if !episode_count['DVD_episodenumber'].nil?
+                                dvd_season_mapping[episode_count['SeasonNumber']] = episode_count['DVD_episodenumber'].to_i
+                            end
+                        end 
                            
-                                seasons = plex.get("/library/metadata/#{tv_show['ratingKey']}/children")['MediaContainer']
-                                if seasons['Directory'].size > 1
-                                    seasons = seasons['Directory']
-                                end
+                        seasons = plex.get("/library/metadata/#{tv_show['ratingKey']}/children")['MediaContainer']
+                            if seasons['Directory'].size > 1
+                                seasons = seasons['Directory']
+                            end
 
-                                seasons.each do | season |
-                                    if season.is_a?(Array)
-                                        season = seasons
-                                    end
-                                        if (Time.now.to_i - season['addedAt'].to_i < 604800)
-                                        if (season_mapping[season['index']].to_i == season['leafCount'].to_i ||
-                                            dvd_season_mapping[season['index']].to_i == season['leafCount'].to_i )
-                                            if tv_episodes[:seasons].detect { |f| f[:id].to_i == show_id.to_i }
-                                                tv_episodes[:seasons].each do |x|
-                                                    if x[:id] == show_id
-                                                        if !x[:season].include? season['index']
-                                                            $logger.info("Reporting #{show['Series']['SeriesName']} Season #{[season['index']]}")
-                                                            x[:season].push(season['index'])
-                                                        end
-                                                    end
-                                                end
-                                            else
-                                                $logger.info("Reporting #{show['Series']['SeriesName']} Season #{[season['index']]}")
-                                                tv_episodes[:seasons].push({
-                                                    :id             => show_id,
-                                                    :series_name    => show['Series']['SeriesName'],
-                                                    :image          => "http://thetvdb.com/banners/#{show['Series']['poster']}",
-                                                    :season         => [season['index']],
-                                                    :network        => show['Series']['Network'],
-                                                    :imdb           => "http://www.imdb.com/title/#{show['Series']['IMDB_ID']}",
-                                                    :synopsis       => show['Series']['Overview']
-                                                })
-                                            end
-                                        end 
-                                    end
+                            seasons.each do | season |
+                                if season.is_a?(Array)
+                                    season = seasons
                                 end
+                                if (Time.now.to_i - season['addedAt'].to_i < 604800)
+                                    if (season_mapping[season['index']].to_i == season['leafCount'].to_i ||
+                                        dvd_season_mapping[season['index']].to_i == season['leafCount'].to_i )
+                                        if tv_episodes[:seasons].detect { |f| f[:id].to_i == show_id.to_i }
+                                        tv_episodes[:seasons].each do |x|
+                                            if x[:id] == show_id
+                                                if !x[:season].include? season['index']
+                                                    $logger.info("Reporting #{show['Series']['SeriesName']} Season #{[season['index']]}")
+                                                    x[:season].push(season['index'])
+                                                end
+                                            end
+                                        end
+                                    else
+                                        $logger.info("Reporting #{show['Series']['SeriesName']} Season #{[season['index']]}")
+                                        tv_episodes[:seasons].push({
+                                            :id             => show_id,
+                                            :series_name    => show['Series']['SeriesName'],
+                                            :image          => "http://thetvdb.com/banners/#{show['Series']['poster']}",
+                                            :season         => [season['index']],
+                                            :network        => show['Series']['Network'],
+                                            :imdb           => "http://www.imdb.com/title/#{show['Series']['IMDB_ID']}",
+                                            :synopsis       => show['Series']['Overview']
+                                        })
+                                    end
+                                end 
+                            end
+                        end
                     end
                 end
             end
         end
-        return tv_episodes
+    return tv_episodes
     end
 end
 
 # Main method that starts the report
 def main
     startTime = Time.now
-    test = PlexReport.new
+    report = PlexReport.new
 
-#    new_episodes = nil
-    movies = test.getMovies
-    new_episodes = test.getNewTVEpisodes
-#    if new_episodes.nil?
-#	    new_episodes = []
-#	    new_seasons = []
-#    else
-        new_seasons = new_episodes[:seasons]
-        new_episodes = new_episodes[:new]
-#    end
+    movies = report.getMovies
+    new_episodes = report.getTVEpisodes
+
+    new_seasons = new_episodes[:seasons]
+    new_episodes = new_episodes[:new]
 
     YAML.load_file(File.join(File.expand_path(File.dirname(__FILE__)), '../etc/config.yaml') )
     template = ERB.new File.new(File.join(File.expand_path(File.dirname(__FILE__)), "../etc/email_body.erb") ).read, nil, "%"
