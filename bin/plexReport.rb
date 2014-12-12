@@ -288,8 +288,7 @@ def main
     test = PlexReport.new
 
 #    new_episodes = nil
-    movies = []
-#    movies = test.getMovies
+    movies = test.getMovies
     new_episodes = test.getNewTVEpisodes
 #    if new_episodes.nil?
 #	    new_episodes = []
