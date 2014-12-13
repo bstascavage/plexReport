@@ -22,10 +22,26 @@ class TheTVDB
         begin
             response = self.class.get(query, :verify => false)
         rescue EOFError
-            $logger.error("thetvdb.org is providing wrong headers.  Blah!")
+            $logger.error("thetvdb.org is providing wrong headers.  Blah!  Retrying.")
+            while $retry_attempts < 3 do
+                $logger.error("Could not connect to thetvdb.com.  Will retry in 30 seconds")
+                sleep(30)
+                $retry_attempts += 1
+                $logger.debug("Retry attempt: #{$retry_attempts}i for query #{query}")
+                if self.get(query).code == 200
+                    break
+                end
+            end
+            if $retry_attempts >= 5
+                $logger.error("Could not connect to thetvdb.  Exiting script.  If you are constantly seeing this, please turn on debugging and open an issue.")
+                $logger.debug("Failed to connect to thetvdb for query: #{query}")
+                exit
+            end
+
+            $retry_attempts = 0
             return nil
         end
-        $logger.debug("Response from thetvdb: Code: #{response.code}.")
+        $logger.debug("Response from thetvdb for query #{query}: Code: #{response.code}.")
 
         if response.code != 200
             if response.nil?
@@ -35,13 +51,14 @@ class TheTVDB
                 $logger.error("Could not connect to thetvdb.com.  Will retry in 30 seconds")
                 sleep(30)
                 $retry_attempts += 1
-                $logger.debug("Retry attempt: #{$retry_attempts}")
+                $logger.debug("Retry attempt: #{$retry_attempts} for query #{query}")
                 if self.get(query).code == 200
                     break
                 end
             end
-            if $retry_attempts >= 3
-                $logger.error("Could not connect to thetvdb.  Exiting script.")
+            if $retry_attempts >= 5
+                $logger.error("Could not connect to thetvdb.  Exiting script.  If you are constantly seeing this, please turn on debugging and open an issue.")
+                $logger.debug("Failed to connect to thetvdb for query: #{query}")
                 exit
             end
         end
