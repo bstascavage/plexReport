@@ -208,10 +208,10 @@ class PlexReport
             # This is some contrivulted logic to strip off the moviedb.org id
             # from the Plex mediadata.  I wish Plex made this information
             # easier to get
-            if plex.get("/library/metadata/#{tv_movie['ratingKey']}")['MediaContainer']['Directory']['guid'].include?("thetvdb")
-                show_id = plex.get("/library/metadata/#{plex_movie['ratingKey']}")['MediaContainer']['Video']['guid'].gsub(/com.plexapp.agents.themoviedb:\/\//, '').gsub(/\?lang.*/, '')
+            if plex.get("/library/metadata/#{tv_show['ratingKey']}")['MediaContainer']['Directory']['guid'].include?("thetvdb")
+                show_id = plex.get("/library/metadata/#{tv_show['ratingKey']}")['MediaContainer']['Directory']['guid'].gsub(/com.plexapp.agents.thetvdb:\/\//, '').gsub(/\?lang.*/, '')
             else
-                $logger.error("TV Show #{tv_movie['title']} using incompatiable agent")
+                $logger.error("TV Show #{tv_show['title']} using incompatiable agent")
                 return nil
             end    
 
