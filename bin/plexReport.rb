@@ -204,7 +204,17 @@ class PlexReport
         begin
         last_updated = plex.get("/library/metadata/#{tv_show['ratingKey']}")['MediaContainer']['Directory']['updatedAt'].to_i
         if (Time.now.to_i - last_updated < 604800) 
-            show_id = plex.get("/library/metadata/#{tv_show['ratingKey']}")['MediaContainer']['Directory']['guid'].gsub(/.*:\/\//, '').gsub(/\?.*/, '')
+        
+            # This is some contrivulted logic to strip off the moviedb.org id
+            # from the Plex mediadata.  I wish Plex made this information
+            # easier to get
+            if plex.get("/library/metadata/#{tv_movie['ratingKey']}")['MediaContainer']['Directory']['guid'].include?("thetvdb")
+                show_id = plex.get("/library/metadata/#{plex_movie['ratingKey']}")['MediaContainer']['Video']['guid'].gsub(/com.plexapp.agents.themoviedb:\/\//, '').gsub(/\?lang.*/, '')
+                return nil
+            else
+                $logger.error("Movie #{tv_movie['title']} using incompatiable agent")
+                return nil
+            end    
 
             begin
                 show = thetvdb.get("series/#{show_id}/all/")['Data']
