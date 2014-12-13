@@ -210,9 +210,8 @@ class PlexReport
             # easier to get
             if plex.get("/library/metadata/#{tv_movie['ratingKey']}")['MediaContainer']['Directory']['guid'].include?("thetvdb")
                 show_id = plex.get("/library/metadata/#{plex_movie['ratingKey']}")['MediaContainer']['Video']['guid'].gsub(/com.plexapp.agents.themoviedb:\/\//, '').gsub(/\?lang.*/, '')
-                return nil
             else
-                $logger.error("Movie #{tv_movie['title']} using incompatiable agent")
+                $logger.error("TV Show #{tv_movie['title']} using incompatiable agent")
                 return nil
             end    
 
