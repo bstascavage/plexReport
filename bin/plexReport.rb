@@ -92,13 +92,20 @@ class PlexReport
         library['MediaContainer']['Directory'].each do | element |
             if element['type'] == 'movie'
 		        library = plex.get("/library/sections/#{element['key']}/all")
-        		    
-                library['MediaContainer']['Video'].each do | element |
-		            movie = self.getMovieInfo(element)
-		            if !movie.nil?
-		                movies.push(movie)
+   
+                if library['MediaContainer']['Video'].is_a?(Hash)
+                    movie = self.getMovieInfo(library['MediaContainer']['Video'])
+                    if !movie.nil?
+                        movies.push(movie)
+                    end
+                else
+                    library['MediaContainer']['Video'].each do | element |
+		                movie = self.getMovieInfo(element)
+		                if !movie.nil?
+		                    movies.push(movie)
+		                end
 		            end
-		        end
+                end
 	        end
         end
 	    return movies.sort_by { |hsh| hsh[:title] }
@@ -114,9 +121,9 @@ class PlexReport
         plex = Plex.new($config)
         movies = Array.new
 
-        $logger.debug(plex_movie)
         if plex_movie.is_a?(Hash)
         if (Time.now.to_i - plex_movie['addedAt'].to_i < 604800)
+            $logger.debug(plex_movie['title'])
             plex_movie = plex.get("/library/metadata/#{plex_movie['ratingKey']}")['MediaContainer']['Video']
 
             # This is some contrivulted logic to strip off the moviedb.org id
