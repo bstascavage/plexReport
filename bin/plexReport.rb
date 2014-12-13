@@ -123,7 +123,6 @@ class PlexReport
 
         if plex_movie.is_a?(Hash)
         if (Time.now.to_i - plex_movie['addedAt'].to_i < 604800)
-            $logger.debug(plex_movie['title'])
             plex_movie = plex.get("/library/metadata/#{plex_movie['ratingKey']}")['MediaContainer']['Video']
 
             # This is some contrivulted logic to strip off the moviedb.org id
@@ -133,7 +132,6 @@ class PlexReport
                 movie_id = plex.get("/library/metadata/#{plex_movie['ratingKey']}")['MediaContainer']['Video']['guid'].gsub(/com.plexapp.agents.themoviedb:\/\//, '').gsub(/\?lang.*/, '')
             elsif plex.get("/library/metadata/#{plex_movie['ratingKey']}")['MediaContainer']['Video']['guid'].include?("imdb")
                 movie_id = plex.get("/library/metadata/#{plex_movie['ratingKey']}")['MediaContainer']['Video']['guid'].gsub(/com.plexapp.agents.imdb:\/\//, '').gsub(/\?lang.*/, '')
-                $logger.debug(movie_id)
                 return nil
             else
                 $logger.error("Movie #{plex_movie['title']} using incompatiable agent")
@@ -202,6 +200,8 @@ class PlexReport
         thetvdb = TheTVDB.new
         plex = Plex.new($config)
 
+        $logger.debug(plex.get("/library/metadata/#{tv_show['ratingKey']}"))
+        begin
         last_updated = plex.get("/library/metadata/#{tv_show['ratingKey']}")['MediaContainer']['Directory']['updatedAt'].to_i
         if (Time.now.to_i - last_updated < 604800) 
             show_id = plex.get("/library/metadata/#{tv_show['ratingKey']}")['MediaContainer']['Directory']['guid'].gsub(/.*:\/\//, '').gsub(/\?.*/, '')
@@ -290,6 +290,11 @@ class PlexReport
                 end
             end
         end
+    rescue Exception => e
+        $logger.error("Something failed.  If you are seeing this, please turn on debugging and open an issue.")
+        $logger.debug(tv_show)
+        $logger.debug(e)
+    end
     return tv_episodes
     end
 end
