@@ -200,8 +200,8 @@ class PlexReport
         thetvdb = TheTVDB.new
         plex = Plex.new($config)
 
-        $logger.debug(plex.get("/library/metadata/#{tv_show['ratingKey']}"))
         begin
+        $logger.debug(plex.get("/library/metadata/#{tv_show['ratingKey']}"))
         last_updated = plex.get("/library/metadata/#{tv_show['ratingKey']}")['MediaContainer']['Directory']['updatedAt'].to_i
         if (Time.now.to_i - last_updated < 604800) 
         
