@@ -212,7 +212,7 @@ class PlexReport
                 show_id = plex.get("/library/metadata/#{tv_show['ratingKey']}")['MediaContainer']['Directory']['guid'].gsub(/com.plexapp.agents.thetvdb:\/\//, '').gsub(/\?lang.*/, '')
             else
                 $logger.error("TV Show #{tv_show['title']} using incompatiable agent")
-                return nil
+                return tv_episodes
             end    
 
             begin
