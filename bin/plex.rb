@@ -23,6 +23,10 @@ class Plex
 
     def get(query, args=nil)
         response = self.class.get(query, :verify => false)
+        $logger.debug("Debug info for plexmediaserver connection")
+        $logger.debug(response.code)
+        $logger.debug(response.request)
+        $logger.debug(response)
         return response
     end
 end
