@@ -2,7 +2,6 @@
 require 'rubygems'
 require 'json'
 require 'httparty'
-require 'pp'
 
 # Class that interacts with thetvdb.org.  
 #
@@ -12,7 +11,8 @@ require 'pp'
 class TheTVDB
     include HTTParty
 
-    base_uri 'http://thetvdb.com/data//'
+    token = '71362BFFDCA2C8CD'
+    base_uri "http://thetvdb.com/api/#{token}//"
 
     def initialize
         $retry_attempts = 0
