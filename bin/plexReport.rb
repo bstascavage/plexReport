@@ -233,10 +233,10 @@ class PlexReport
                 if !airdate_date.nil?
                     if ((Date.parse(Time.now.to_s) - airdate_date).round < 8 &&
                         (Date.parse(Time.now.to_s) - airdate_date).round > 0)
-                        if !tv_episodes[:new].any? {|h| h[:id] == show_id}
+                        #if !tv_episodes[:new].any? {|h| h[:id] == show_id}
                             series = plex.get("/library/metadata/#{tv_show['ratingKey']}/allLeaves")['MediaContainer']['Video']
                             series.each do | plex_episode |
-                                if Time.now.to_i - plex_episode['addedAt'].to_i < 604800
+                                if (episode['EpisodeNumber'] == plex_episode['index'] && episode['SeasonNumber'] == plex_episode['parentIndex'])
                                     $logger.info("Reporting #{show['Series']['SeriesName']} Season #{episode['SeasonNumber']} Episode #{episode['EpisodeNumber']}")
                                     tv_episodes[:new].push({
                                         :id             => show_id,
@@ -251,7 +251,7 @@ class PlexReport
                                     })
                                 end
                             end
-                        end
+                        #end
                     elsif ((Date.parse(Time.now.to_s) - Date.parse(Time.at(last_updated).to_s)).round < 7)
                         season_mapping = Hash.new
                         dvd_season_mapping = Hash.new
