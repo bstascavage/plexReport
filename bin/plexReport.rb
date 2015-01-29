@@ -7,6 +7,7 @@ require 'yaml'
 require 'erb'
 require 'logger'
 require 'optparse'
+require 'pp'
 
 require_relative 'plex'
 require_relative 'themoviedb'
@@ -89,6 +90,7 @@ class PlexReport
 	    movies = Array.new
 
 	    library = plex.get('/library/sections')
+
         library['MediaContainer']['Directory'].each do | element |
             if element['type'] == 'movie'
 		        library = plex.get("/library/sections/#{element['key']}/all")
