@@ -14,6 +14,7 @@ The following are needed to run this script:
 2.  themoviedb set as your Agent for your Movie section
 3.  thetvdb.org set as your Agent for your TV section
 4.  Your Plex API key.  This can be found by searching for your device here (it is the 'token' field): https://plex.tv/devices.xml
+5.  (Optional) A Gmail account to forward the email (Gmail is the only supported provider, so if you use another, YMMV)
 
 ## Installation (Linux)
 
