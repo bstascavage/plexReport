@@ -94,12 +94,16 @@ class PlexReport
         library['MediaContainer']['Directory'].each do | element |
             if element['type'] == 'movie'
 		        library = plex.get("/library/sections/#{element['key']}/all")
-   
+
                 if library['MediaContainer']['Video'].is_a?(Hash)
+                begin   
                     movie = self.getMovieInfo(library['MediaContainer']['Video'])
                     if !movie.nil?
                         movies.push(movie)
                     end
+                rescue
+                    $logger.error("Error loading movie section #{element['librarySectionTitle']}.  Is it empty?")
+                end
                 else
                     library['MediaContainer']['Video'].each do | element |
 		                movie = self.getMovieInfo(element)
@@ -181,8 +185,13 @@ class PlexReport
         library['MediaContainer']['Directory'].each do | element |
             if element['type'] == 'show'
                 library = plex.get("/library/sections/#{element['key']}/all")
-                library['MediaContainer']['Directory'].each do | element |
-                    tv_episodes = self.getTVInfo(element, tv_episodes)
+
+                begin
+                    library['MediaContainer']['Directory'].each do | element |
+                        tv_episodes = self.getTVInfo(element, tv_episodes)
+                    end
+                rescue
+                    $logger.error("Something wrong with section #{element['librarySectionTitle']}.  Is it empty?")
                 end
             end
         end
