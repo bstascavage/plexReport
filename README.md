@@ -37,6 +37,7 @@ The following are needed to run this script:
     
 ## Installation (OS X)
 Part 1: Install plexReport
+
 1.  Clone this repo on your server:
 
     `git clone https://github.com/bstascavage/plexReport.git`
