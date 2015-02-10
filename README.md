@@ -53,6 +53,7 @@ Part 1: Install plexReport
 It should work correctly    
 
 Part 2: Create Ruby Wrapper
+
 Now to have the script run once a week through crontab, you have to create an RVM alias by doing the following steps:
 (Note: You need an RVM alias because launchd, cron, and other process schedulers operate in discrete bash shell environments. Simply calling ruby from inside your launchd or cron script will not work; that will invoke the non-RVM ruby that OS X shipped with. Instead, you need an RVM alias, which will run your file through RVM's ruby, from inside launchd.)
 
