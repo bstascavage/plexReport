@@ -100,8 +100,11 @@ Now to have the script run once a week through crontab, you have to create an RV
 7.  Go to the /usr/local/bin directory and set the correct permissions by entering
         `chmod u+x plexReport.sh`
 
-8   Add the following line to your crontab (sudo pico etc/crontab) 
-        `15 11 * * 5 <USERNAME> /usr/local/bin/plexReport.sh` (This will run it every Friday at 11:15. To change the time, see crontab documentation: http://www.adminschoice.com/crontab-quick-reference
+8.  Add the following line to your crontab (sudo pico etc/crontab) 
+
+        `15 11 * * 5 <USERNAME> /usr/local/bin/plexReport.sh` 
+    (This will run it every Friday at 11:15. To change the time, see crontab documentation:     
+    http://www.adminschoice.com/crontab-quick-reference
 
 ## Config file
 
