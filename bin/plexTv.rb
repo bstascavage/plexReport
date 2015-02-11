@@ -29,6 +29,7 @@ class PlexTv
 
         if response.code != 200
             $logger.error("Cannot connect to plex.tv!  Change your connection and your Plex API key.  Exiting.")
+            $logger.debug("Plextv Response code: #{response.code}")
             exit
         end
         return response
