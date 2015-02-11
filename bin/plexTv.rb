@@ -26,6 +26,11 @@ class PlexTv
         end
 
         response = self.class.get(new_query, :verify => false)
+
+        if response.code != 200
+            $logger.error("Cannot connect to plex.tv!  Change your connection and your Plex API key.  Exiting.")
+            exit
+        end
         return response
     end
 end
