@@ -51,8 +51,13 @@ class MailReport
 	if !$testEmail
       	    if $plexEmails
                 plex_users = plexTv.get('/pms/friends/all')
-                plex_users['MediaContainer']['User'].each do | user |
-                    users.push(user['email'])
+
+                if plex_users.nil?
+                    $logger.info("No Plex friends found.")  
+                else                
+                    plex_users['MediaContainer']['User'].each do | user |
+                        users.push(user['email'])
+                    end
                 end
 	    end
 	    if !$config['mail']['recipients'].nil? || !$config['mail']['recipients_email'].nil?
