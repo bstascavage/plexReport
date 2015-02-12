@@ -52,7 +52,7 @@ class MailReport
       	    if $plexEmails
                 plex_users = plexTv.get('/pms/friends/all')
 
-                if plex_users.nil?
+                if plex_users.nil? || plex_users.empty?
                     $logger.info("No Plex friends found.")  
                 else                
                     plex_users['MediaContainer']['User'].each do | user |
