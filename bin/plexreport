@@ -9,11 +9,11 @@ require 'logger'
 require 'optparse'
 require 'pp'
 
-require_relative 'plex'
-require_relative 'themoviedb'
-require_relative 'thetvdb'
-require_relative 'omdb'
-require_relative 'mailReport'
+require_relative '/var/lib/plexReport/plex'
+require_relative '/var/lib/plexReport/themoviedb'
+require_relative '/var/lib/plexReport/thetvdb'
+require_relative '/var/lib/plexReport/omdb'
+require_relative '/var/lib/plexReport/mailReport'
 
 # Class for parsing the Plex server for new movies and TV Shows
 #
@@ -60,14 +60,13 @@ class PlexReport
 
     def initialize
         begin
-            $config = YAML.load_file(File.join(File.expand_path(File.dirname(__FILE__)), '../etc/config.yaml') )
+            $config = YAML.load_file('/etc/plexReport/config.yaml')
         rescue Errno::ENOENT => e
             abort('Configuration file not found.  Exiting...')
         end
 
         begin
-            $logging_path = File.join(File.expand_path(File.dirname(__FILE__)), '../plexReport.log') 
-            $logger = Logger.new($logging_path)
+            $logger = Logger.new('/var/log/plexReport.log')
             
             if $options[:verbose]
                 $logger.level = Logger::DEBUG
@@ -339,8 +338,8 @@ def main
     new_seasons = new_episodes[:seasons]
     new_episodes = new_episodes[:new]
 
-    YAML.load_file(File.join(File.expand_path(File.dirname(__FILE__)), '../etc/config.yaml') )
-    template = ERB.new File.new(File.join(File.expand_path(File.dirname(__FILE__)), "../etc/email_body.erb") ).read, nil, "%"
+    YAML.load_file('/etc/plexReport/config.yaml')
+    template = ERB.new File.new("/etc/plexReport/email_body.erb").read, nil, "%"
     mail = MailReport.new($config, $options)
 
     if (movies.empty? && new_seasons.empty? && new_episodes.empty?)

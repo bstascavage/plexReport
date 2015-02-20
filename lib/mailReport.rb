@@ -3,7 +3,7 @@ require 'rubygems'
 require 'mail'
 require 'time'
 
-require_relative 'plexTv'
+require_relative '/var/lib/plexReport/plexTv'
 
 # Class for sending out the email notification.
 #

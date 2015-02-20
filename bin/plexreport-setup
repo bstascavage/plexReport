@@ -1,0 +1,110 @@
+#!/usr/bin/ruby
+require 'rubygems'
+require 'json'
+require 'httparty'
+require 'highline/import'
+
+require_relative '/var/lib/plexReport/plexTv'
+
+# Class to setup PlexReport
+#
+# Author: Brian Stascavage
+# Email: brian@stascavage.com
+#
+class Setup
+    include HTTParty
+
+    def initialize
+        begin
+            $config = Hash.new
+#            $config = YAML.load_file(File.join(File.expand_path(File.dirname(__FILE__)), '../etc/config.yaml') )
+        rescue Errno::ENOENT => e
+            abort('Configuration file not found.  Exiting...')
+        end
+
+        $config = { 'email' => 
+                        { 'title'    => '' }, 
+                    'plex'  =>
+                        { 'server'   => '',
+                          'api_key'  => '' },
+                    'mail'  =>
+                        { 'address'  => '',
+                          'port'     => '',
+                          'username' => '',
+                          'password' => '',
+                          'from'     => '',
+                          'subject'  => '' }
+                  }
+        $plex = PlexTv.new($config)
+    end
+
+    def setPlexApiKey
+        username = ask("Enter your Plex username:") { |q| q.echo = true }
+        password = ask("Enter your Plex Password.  NOTE: This will not be saved anywhere") { |q| q.echo = "*" }
+
+        auth = {:username => username, :password => password}
+        devices = $plex.get("/devices.xml", auth, true)
+
+        devices['MediaContainer']['Device'].each do | device, index |
+            if device['provides'] == 'server'
+                puts "Your API key is: #{device['token']}"
+                $config['plex']['api_key'] = device['token']
+                return true
+            end 
+
+            if devices['MediaContainer']['Device'].size - 1 == index
+                puts "Cannot find Plex Server.  Exiting"
+                abort
+            end
+        end
+    end
+
+    def setServer
+        $config['plex']['server'] = ask("Enter your Plex server IP (default: localhost)") { |q| q.echo = true }
+        if $config['plex']['server'].empty?
+            $config['plex']['server'] = 'localhost'
+        end
+    end
+
+    def setEmail
+        $config['mail']['address'] = ask("Enter your SMTP server (default: smtp.gmail.com)") { |q| q.echo = true }
+        if $config['mail']['address'].empty?
+            $config['mail']['address'] = 'smtp.gmail.com'
+        end
+
+        $config['mail']['port'] = ask("Enter your SMTP port (default: 587)") { |q| q.echo = true }
+        if $config['mail']['port'].empty?
+            $config['mail']['port'] = 587
+        end
+
+        $config['mail']['username'] = ask("Enter your SMTP username/email address (For Gmail, use email address)") { |q| q.echo = true }
+        $config['mail']['password'] = ask("Enter your email password (This will only be saved in etc/config.yaml)") { |q| q.echo = "*" }
+
+        $config['mail']['from'] = ask("Display name of the sender (default: Plex Server)") { |q| q.echo = true }
+        if $config['mail']['from'].empty?
+            $config['mail']['from'] = 'Plex Server'
+        end
+
+        $config['mail']['subject'] = ask("Email subject (default: Plex Server Summary)") { |q| q.echo = true }
+        if $config['mail']['subject'].empty?
+            $config['mail']['subject'] = 'Plex Server Summary'
+        end
+
+        $config['email']['title'] = ask("Display title in the Email body (default: Plex Server Summary)") { |q| q.echo = true }
+        if $config['email']['title'].empty?
+            $config['email']['title'] = 'Plex Server Summary'
+        end
+    end
+
+    def start
+        self.setServer
+        self.setPlexApiKey
+        self.setEmail
+
+        File.open('/etc/plexReport/config.yaml', 'w') {|f| f.write $config.to_yaml }
+        puts "Writing information to /etc/plexReport/config.yaml"
+    end
+end
+
+setup_agent = Setup.new
+setup_agent.start
