@@ -6,16 +6,24 @@ Scripts to generate a weekly email of new additions to Plex.
 ## Introduction
 This script is meant to send out a summary of all new Plex entries to your server to all of your server's users.  
 
+## Supported Platforms
+* Debian
+* Mac OSX
+
+## Supported Email Clients
+* Gmail
+* Mozilla Thunderbird
+
 ## Prerequisites
 
 The following are needed to run this script:
 
-1.  Ruby installed (at least version 1.9.3) and ruby-dev
-2.  For OSX: make sure you have Ruby installed using RVM (This is needed to create a wrapper to weekly run the script through crontab) (see http://railsapps.github.io/installrubyonrails-mac.html. Follow the steps from "Prepare your computer" until "Rails installation options")
-3.  themoviedb set as your Agent for your Movie section
-3.  thetvdb.org set as your Agent for your TV section
+1.  Ruby installed (at least version 1.9.3) and ruby-dev.
+2.  For OSX: make sure you have Ruby installed using RVM (This is needed to create a wrapper to weekly run the script through crontab) (see http://railsapps.github.io/installrubyonrails-mac.html. Follow the steps from "Prepare your computer" until "Rails installation options").
+3.  themoviedb set as your Agent for your Movie section on your Plex server.
+3.  thetvdb.org set as your Agent for your TV section on your Plex server.
 4.  Your Plex API key.  This can be found by searching for your device here (it is the 'token' field): https://plex.tv/devices.xml
-5.  (Optional) A Gmail account to forward the email (Gmail is the only supported provider, so if you use another, YMMV)
+5.  (Optional) A Gmail account to forward the email (Gmail is the only supported provider, so if you use another, YMMV).
 
 ## Installation (Linux)
 
