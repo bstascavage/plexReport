@@ -197,7 +197,12 @@ class PlexReport
         end
 
         tv_episodes[:new].sort_by! { |hsh| hsh[:series_name] }
-        tv_episodes[:seasons].sort_by! { |hsh| hsh[:series_name] }
+
+        begin
+            tv_episodes[:seasons].sort_by! { |hsh| hsh[:series_name] }
+        rescue
+            $logger.error("Error in sorting TV seasons")
+        end
         return tv_episodes 
     end
 
