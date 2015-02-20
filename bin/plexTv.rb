@@ -15,7 +15,15 @@ class PlexTv
     format :xml
 
     def initialize(config)
-        $token = config['plex']['api_key']
+        if !config.empty?
+            if !config['plex']['api_key'].empty?
+                $token = config['plex']['api_key']
+            else
+                if defined? $logger
+                    $logger.error("Missing Plex token")
+                end
+            end
+        end
     end
 
     def get(query, auth=nil, token_check=false)
@@ -32,8 +40,13 @@ class PlexTv
         end
 
         if response.code != 200
-            puts "Cannot connect to plex.tv!  Change your connection."
-            exit
+            if response.code == 401
+                puts "Invalid plex.tv credentials"
+                abort
+            else
+                puts "Cannot connect to plex.tv!  Change your connection."
+                abort
+            end
         end
         return response
     end
