@@ -18,18 +18,21 @@ class PlexTv
         $token = config['plex']['api_key']
     end
 
-    def get(query, args=nil)
-        if args.nil?
-          new_query = query + "?X-Plex-Token=#{$token}"
+    def get(query, auth=nil, token_check=false)
+        if !token_check
+            new_query = query + "?X-Plex-Token=#{$token}"
         else
-          new_query = query + "?X-Plex-Token=#{$token}&#{args}"
+            new_query = query 
         end
 
-        response = self.class.get(new_query, :verify => false)
+        if auth.nil?
+            response = self.class.get(new_query)
+        else
+            response = self.class.get(new_query, :basic_auth => auth)
+        end
 
         if response.code != 200
-            $logger.error("Cannot connect to plex.tv!  Change your connection and your Plex API key.  Exiting.")
-            $logger.debug("Plextv Response code: #{response.code}")
+            puts "Cannot connect to plex.tv!  Change your connection."
             exit
         end
         return response
