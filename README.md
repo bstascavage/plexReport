@@ -31,17 +31,11 @@ The following are needed to run this script:
 
     `git clone https://github.com/bstascavage/plexReport.git`
 2.  Change to the plexReport directory
-3.  Install the blunder gem (http://bundler.io/)
+3.  Run the initial_setup script:
 
-    `gem install bundler`
-4.  Install the gem dependecies:
+    `./initial_setup.sh`
 
-    `bundle install`
-5.  Setup the config file in `etc/config.yaml`.  See `etc/config.yaml.example` and below for details
-6.  Run `bin/plexReport.rb` to execute the script
-7.  To have the script run once a week, run `crontab -e` and add the following line:
-
-    `15 11 * * 5 <PATH_TO_REPO>/bin/plexReport.rb` (This will run it every Friday at 11:15.  To change the time, see crontab documentation: http://www.adminschoice.com/crontab-quick-reference
+4.   If you want to run your script with different commandline parameters, you'll need to edit the crontab.  See here for reference: http://www.adminschoice.com/crontab-quick-reference
     
 ## Installation (OS X)
 Part 1: Install plexReport
@@ -57,8 +51,9 @@ Part 1: Install plexReport
 
     `bundle install`
 5.  Setup the config file in `etc/config.yaml`.  See `etc/config.yaml.example` and below for details
-6.  Run `bin/plexReport.rb` to execute the script
+6.  Run `bin/plexreport` to execute the script
 It should work correctly    
+    
 
 Part 2: Create Ruby Wrapper
 
@@ -116,6 +111,8 @@ Now to have the script run once a week through crontab, you have to create an RV
 
 ## Config file
 
+By default, the config file is located in `/etc/plexReport/config.yaml`.  If you need to change any information for the program, or to add more optional config parameters, see below for the config file format:
+
 ###### email
 `title` - Banner title for the email body.  Required.
 
@@ -143,8 +140,9 @@ Now to have the script run once a week through crontab, you have to create an RV
 
 ## Command-line Options
 
-All commandline options can be seen by running `plexReport.rb --help`
+Once installed, you can run the script by simply running `plexreport`.  If you need to reinstall or reconfigure the program, run `plexreport-setup`.  All commandline options can be seen by running `plexReport --help`
 
+##### Options:
 `-n, --no-plex-email` - Do not send emails to Plex friends.  Can be used with the `recipients_email` and `recipients` config file option to customize email recipients.
 
 `-l, --add-library-names` - Adding the Library name in front of the movie/tv show.  To be used with custom Libraries
