@@ -13,6 +13,7 @@ PLEX_REPORT_CONF='/etc/plexReport'
 /usr/bin/touch /etc/plexReport/config.yaml
 /usr/bin/touch /var/log/plexReport.log
 
+/use/bin/gem install bundler
 /usr/local/bin/bundle install
 /usr/local/sbin/plexreport-setup
 
@@ -29,3 +30,5 @@ read CRON_MINUTE
 #install new cron file
 /usr/bin/crontab mycron
 /bin/rm mycron
+
+echo "Setup complete!"
