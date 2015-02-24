@@ -111,7 +111,7 @@ Now to have the script run once a week through crontab, you have to create an RV
 
 ## Upgrading
 
-To upgrade your code, cd to your plexReport directory and run `update.sh`
+To upgrade your code, cd to your plexReport directory and run `./update.sh`
 
 ## Config file
 
