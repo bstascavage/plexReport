@@ -125,6 +125,8 @@ By default, the config file is located in `/etc/plexReport/config.yaml`.  If you
 
 `api_key` - Your Plex API key.  Required.
 
+`sections` - Array of sections to report on.  If field is not set, will report on all TV and movie sections.  Format is ['section1', 'section2'].  Optional.
+
 ###### mail
 `address` - Address of your smtp relay server.  (ie smtp.gmail.com).  Required.
 
