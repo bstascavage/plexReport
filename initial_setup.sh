@@ -6,9 +6,9 @@
 PLEX_REPORT_LIB='/var/lib/plexReport'
 PLEX_REPORT_CONF='/etc/plexReport'
 
-/bin/echo "Creating plexreport library at /var/lib/plexreport"
+/bin/echo "Creating plexreport library at /var/lib/plexReport"
 /bin/mkdir -p $PLEX_REPORT_LIB
-/bin/echo "Creating plexreport conf directory at /etc/plexreport"
+/bin/echo "Creating plexreport conf directory at /etc/plexReport"
 /bin/mkdir -p $PLEX_REPORT_CONF
 
 /bin/echo "Moving plexreport and plexreport-setup to /usr/local/sbin"
