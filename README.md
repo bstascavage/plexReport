@@ -109,6 +109,10 @@ Now to have the script run once a week through crontab, you have to create an RV
     (This will run it every Friday at 11:15. To change the time, see crontab documentation:     
     http://www.adminschoice.com/crontab-quick-reference
 
+## Upgrading
+
+To upgrade your code, cd to your plexReport directory and run `update.sh`
+
 ## Config file
 
 By default, the config file is located in `/etc/plexReport/config.yaml`.  If you need to change any information for the program, or to add more optional config parameters, see below for the config file format:
