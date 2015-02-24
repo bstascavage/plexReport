@@ -166,3 +166,4 @@ New Movies:
 
 New Movies (detailed view):
 ![alt tag](http://i.imgur.com/9BHiQHW.png)
+
