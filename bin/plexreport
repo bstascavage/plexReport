@@ -92,6 +92,14 @@ class PlexReport
 
         library['MediaContainer']['Directory'].each do | element |
             if element['type'] == 'movie'
+                # Checks to see if a section filter was applied
+                # If so, checks to see if this section should be reported
+                if !$config['plex']['sections'].nil?
+                    if !$config['plex']['sections'].include?(element['title'])
+                        break
+                    end
+                end
+
 		        library = plex.get("/library/sections/#{element['key']}/all")
 
                 if library['MediaContainer']['Video'].is_a?(Hash)
@@ -183,6 +191,14 @@ class PlexReport
         library = plex.get('/library/sections')
         library['MediaContainer']['Directory'].each do | element |
             if element['type'] == 'show'
+                # Checks to see if a section filter was applied
+                # If so, checks to see if this section should be reported
+                if !$config['plex']['sections'].nil?
+                    if !$config['plex']['sections'].include?(element['title'])
+                        break
+                    end
+                end
+
                 library = plex.get("/library/sections/#{element['key']}/all")
 
                 begin
