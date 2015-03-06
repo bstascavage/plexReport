@@ -24,7 +24,7 @@ PLEX_REPORT_CONF='/etc/plexReport'
 /usr/bin/touch /var/log/plexReport.log
 
 /bin/echo "Installing ruby gem dependency"
-/use/bin/gem install bundler
+/usr/bin/gem install bundler
 /usr/local/bin/bundle install
 
 /bin/echo "Running /usr/local/sbin/plexreport-setup"

@@ -8,6 +8,7 @@ This script is meant to send out a summary of all new Plex entries to your serve
 
 ## Supported Platforms
 * Debian
+* Ubuntu 14.04 LTS
 * Mac OSX
 
 ## Supported Email Clients
@@ -22,14 +23,13 @@ The following are needed to run this script:
 2.  For OSX: make sure you have Ruby installed using RVM (This is needed to create a wrapper to weekly run the script through crontab) (see http://railsapps.github.io/installrubyonrails-mac.html. Follow the steps from "Prepare your computer" until "Rails installation options").
 3.  themoviedb set as your Agent for your Movie section on your Plex server.
 3.  thetvdb.org set as your Agent for your TV section on your Plex server.
-4.  Your Plex API key.  This can be found by searching for your device here (it is the 'token' field): https://plex.tv/devices.xml
-5.  (Optional) A Gmail account to forward the email (Gmail is the only supported provider, so if you use another, YMMV).
+4.  (Optional) A Gmail account to forward the email (Gmail is the only supported provider, so if you use another, YMMV).
 
 ## Installation (Linux)
 
 1.  Clone this repo on your server:
 
-    `git clone https://github.com/bstascavage/plexReport.git`
+    `git clone https://github.com/granbebe/plexReport.git`
 2.  Change to the plexReport directory
 3.  Run the initial_setup script:
 
@@ -42,7 +42,7 @@ Part 1: Install plexReport
 
 1.  Clone this repo on your server:
 
-    `git clone https://github.com/bstascavage/plexReport.git`
+    `git clone https://github.com/granbebe/plexReport.git`
 2.  Change to the plexReport directory
 3.  Install the blunder gem (http://bundler.io/)
 
