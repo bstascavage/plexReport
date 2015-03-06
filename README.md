@@ -29,7 +29,7 @@ The following are needed to run this script:
 
 1.  Clone this repo on your server:
 
-    `git clone https://github.com/granbebe/plexReport.git`
+    `git clone https://github.com/bstascavage/plexReport.git`
 2.  Change to the plexReport directory
 3.  Run the initial_setup script:
 
@@ -42,7 +42,7 @@ Part 1: Install plexReport
 
 1.  Clone this repo on your server:
 
-    `git clone https://github.com/granbebe/plexReport.git`
+    `git clone https://github.com/bstascavage/plexReport.git`
 2.  Change to the plexReport directory
 3.  Install the blunder gem (http://bundler.io/)
 
