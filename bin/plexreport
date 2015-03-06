@@ -8,6 +8,8 @@ require 'erb'
 require 'logger'
 require 'optparse'
 require 'pp'
+require 'i18n'
+require 'i18n/backend/fallbacks'
 
 require_relative '/var/lib/plexReport/plex'
 require_relative '/var/lib/plexReport/themoviedb'
@@ -355,6 +357,11 @@ end
 def main
     startTime = Time.now
     report = PlexReport.new
+
+    I18n::Backend::Simple.send(:include, I18n::Backend::Fallbacks)
+    I18n.load_path = Dir['/var/lib/plexReport/locales/*.yml']
+    I18n.backend.load_translations
+    I18n.locale = $config['email']['language'].nil? ? 'en' : $config['email']['language']
 
     movies = report.getMovies
     new_episodes = report.getTVEpisodes

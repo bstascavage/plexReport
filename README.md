@@ -103,7 +103,7 @@ Now to have the script run once a week through crontab, you have to create an RV
 7.  Go to the /usr/local/bin directory and set the correct permissions by entering
         `chmod u+x plexReport.sh`
 
-8.  Add the following line to your crontab (sudo pico etc/crontab) 
+8.  Add the following line to your crontab (sudo crontab -e) 
 
         `15 11 * * 5 <USERNAME> /usr/local/bin/plexReport.sh` 
     (This will run it every Friday at 11:15. To change the time, see crontab documentation:     
@@ -120,7 +120,7 @@ By default, the config file is located in `/etc/plexReport/config.yaml`.  If you
 ###### email
 `title` - Banner title for the email body.  Required.
 
-`language` - The language of the content. You need to use ISO 639-1 code. If a content is not avilable in the specified language, the script will fall back to english. Defaults to 'en'. Optional.
+`language` - The language of the email body. You need to use ISO 639-1 code ('fr', 'en', 'de'). If a content is not available in the specified language, the script will fall back to english. Defaults to 'en'. Optional.
 
 ###### plex
 `server` - IP address of your Plex server.  Defaults to 'localhost'.  Optional.
