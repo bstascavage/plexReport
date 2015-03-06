@@ -119,6 +119,7 @@ By default, the config file is located in `/etc/plexReport/config.yaml`.  If you
 
 ###### email
 `title` - Banner title for the email body.  Required.
+`language` - The language of the content. You need to use ISO 639-1 code. If a content is not avilable in the specified language, the script will fall back to english. Defaults to 'en'. Optional.
 
 ###### plex
 `server` - IP address of your Plex server.  Defaults to 'localhost'.  Optional.

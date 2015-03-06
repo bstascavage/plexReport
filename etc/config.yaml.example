@@ -1,6 +1,7 @@
 ---
 email:
    title: 'Default Email Header'
+   langauge: 'en'
 plex:
    server: <SERVER_IP>
    api_key: <API_KEY>
