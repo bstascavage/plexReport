@@ -8,6 +8,7 @@ This script is meant to send out a summary of all new Plex entries to your serve
 
 ## Supported Platforms
 * Debian
+* Ubuntu 14.04 LTS
 * Mac OSX
 
 ## Supported Email Clients
@@ -22,8 +23,7 @@ The following are needed to run this script:
 2.  For OSX: make sure you have Ruby installed using RVM (This is needed to create a wrapper to weekly run the script through crontab) (see http://railsapps.github.io/installrubyonrails-mac.html. Follow the steps from "Prepare your computer" until "Rails installation options").
 3.  themoviedb set as your Agent for your Movie section on your Plex server.
 3.  thetvdb.org set as your Agent for your TV section on your Plex server.
-4.  Your Plex API key.  This can be found by searching for your device here (it is the 'token' field): https://plex.tv/devices.xml
-5.  (Optional) A Gmail account to forward the email (Gmail is the only supported provider, so if you use another, YMMV).
+4.  (Optional) A Gmail account to forward the email (Gmail is the only supported provider, so if you use another, YMMV).
 
 ## Installation (Linux)
 
@@ -103,7 +103,7 @@ Now to have the script run once a week through crontab, you have to create an RV
 7.  Go to the /usr/local/bin directory and set the correct permissions by entering
         `chmod u+x plexReport.sh`
 
-8.  Add the following line to your crontab (sudo pico etc/crontab) 
+8.  Add the following line to your crontab (sudo crontab -e) 
 
         `15 11 * * 5 <USERNAME> /usr/local/bin/plexReport.sh` 
     (This will run it every Friday at 11:15. To change the time, see crontab documentation:     
@@ -119,6 +119,8 @@ By default, the config file is located in `/etc/plexReport/config.yaml`.  If you
 
 ###### email
 `title` - Banner title for the email body.  Required.
+
+`language` - The language of the email body. You need to use ISO 639-1 code ('fr', 'en', 'de'). If a content is not available in the specified language, the script will fall back to english. Defaults to 'en'. Optional.
 
 ###### plex
 `server` - IP address of your Plex server.  Defaults to 'localhost'.  Optional.

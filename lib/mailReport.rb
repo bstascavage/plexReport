@@ -15,7 +15,6 @@ class MailReport
         $config = config
 	$plexEmails = options[:emails]
 	$testEmail = options[:test_email]
-        
         if !$config['mail']['port'].nil?
             $port = $config['mail']['port']
         else
@@ -86,7 +85,7 @@ class MailReport
             mail = Mail.new do
                 from "#{$config['mail']['from']} <#{$config['mail']['username']}>"
                 to user
-                subject $config['mail']['subject'] + " " + Time.now.strftime("%m/%d/%Y")
+                subject $config['mail']['subject'] + " " + (I18n.l Time.now.to_date)
                 content_type 'text/html; charset=UTF-8'
                 body body
             end
