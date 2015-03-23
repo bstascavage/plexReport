@@ -15,6 +15,11 @@ This script is meant to send out a summary of all new Plex entries to your serve
 * Gmail
 * Mozilla Thunderbird
 
+## Supported Plex Agents
+* themoviedb
+* Freebase
+* thetvdb.org
+
 ## Prerequisites
 
 The following are needed to run this script:
