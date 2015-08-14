@@ -55,7 +55,9 @@ class MailReport
                     $logger.info("No Plex friends found.")  
                 else                
                     plex_users['MediaContainer']['User'].each do | user |
-                        users.push(user['email'])
+			if !user['email'].empty?
+                            users.push(user['email'])
+			end
                     end
                 end
 	    end
