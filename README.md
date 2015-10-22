@@ -101,7 +101,7 @@ Now to have the script run once a week through crontab, you have to create an RV
       `export LANG=en_US.UTF-8`
     
     - Add the wrapper call you just tested in step 4 to the file that you have just tested. E.g. 
-      `/users/ersw1187/.rvm/wrappers/plexReport/ruby /path_to/plexReport/bin/plexReport.rb`
+      `/users/ersw1187/.rvm/wrappers/plexReport/ruby /path_to/plexReport/bin/plexReport`
     
 6.  Copy plexReport.sh to /user/local/bin directory    
 
