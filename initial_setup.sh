@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 # Bash script that copies plexreport files to various directories
 # and walks the user through the initial setup
 #
