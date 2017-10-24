@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Bash script that copies plexreport files to various directories
 # and walks the user through the initial setup
 #
@@ -24,7 +24,8 @@ PLEX_REPORT_CONF='/etc/plexReport'
 /usr/bin/touch /var/log/plexReport.log
 
 /bin/echo "Installing ruby gem dependency"
-/usr/bin/gem install bundler
+GEM_BINARY=$(which gem)
+$GEM_BINARY install bundler
 /usr/local/bin/bundle install
 
 /bin/echo "Running /usr/local/sbin/plexreport-setup"
